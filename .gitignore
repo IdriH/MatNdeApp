@@ -1,0 +1,5 @@
+back-end/node_modules/
+back-end/db/dbtests.js
+back-end/db/insertionToDb.js
+back-end/db/package.json
+back-end/db/package-lock,json
