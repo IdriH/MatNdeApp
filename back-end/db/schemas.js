@@ -86,11 +86,11 @@ const availability_model = new Schema({
 });
 
 const bookings_model = new Schema({
-    professionalID : Number,
+    professionalID: { type: Number, required: true }, // Add professionalID field
     timeSlot: { type: Number, required: true },
     message: String,
-    
-},{timestamps: true}); //mongo will add createdAt and updatedAttimestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+    timeStamp: { type: Date, default: Date.now } // Add timeStamp field with default value
+}, { timestamps: true });
 
 const user_model = new Schema({
     username: {
@@ -109,8 +109,8 @@ const user_model = new Schema({
 
 const order_model = new Schema({
 
-    professional: {
-        type: String,
+    professionalID: {
+        type: Number,
         required: true
     },
     items: {
@@ -123,7 +123,7 @@ const order_model = new Schema({
             required: true
         }
     }
-});
+},{timestamps:true});
 
 const Products = mongoose.model("Products", products_model);
 const Professionals = mongoose.model("Professionals", professionals_model);

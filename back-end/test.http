@@ -5,3 +5,16 @@ GET http://localhost:3000/
 
 ### get list of products
 GET http://localhost:3000/products
+
+### get list of professionals 
+GET http://localhost:3000/professionals
+
+### get list of orders (only admin can complete later after authentication implementation)
+GET http://localhost:3000/orders
+
+
+### get professional 
+GET http://localhost:3000/professional/2
+
+### get reviews 
+GET http://localhost:3000/reviews/2
