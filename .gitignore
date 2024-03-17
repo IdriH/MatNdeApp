@@ -3,3 +3,5 @@ back-end/db/dbtests.js
 back-end/db/insertionToDb.js
 back-end/package.json
 back-end/package-lock.json
+back-end/server/dao-availabilities.js
+back-end/server/dao-bookings.js

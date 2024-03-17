@@ -3,18 +3,72 @@
 ###
 GET http://localhost:3000/
 
+
+###client point of view
+
 ### get list of products
 GET http://localhost:3000/products
 
 ### get list of professionals 
 GET http://localhost:3000/professionals
 
-### get list of orders (only admin can complete later after authentication implementation)
-GET http://localhost:3000/orders
-
-
 ### get professional 
 GET http://localhost:3000/professional/2
 
 ### get reviews 
 GET http://localhost:3000/reviews/2
+
+
+### add review
+POST http://localhost:3000/reviews/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "professionalID": 2,
+    "reviewerName": "Filan Fisteku",
+    "score": 4,
+    "comment": "Well done job with my sink"
+}
+
+### -------------------Professional point of view
+
+###get orders professional
+
+GET http://localhost:3000/orders/3
+
+###get specific order professional
+GET http://localhost:3000/orders/3/65f7195b26dd8330c12c47d3
+
+### add order
+POST http://localhost:3000/orders/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "professionalID":2,
+    "products":[{"name":"PVC tube 4m 30cm diameter","quantity":2},{"name":"PVC tube 3m","quantity":2}]
+}
+
+### delete order
+DELETE http://localhost:3000/orders/delete/65f722096b8bb54922b1ecb4 HTTP/1.1
+
+
+### modify order add remove 
+PUT http://localhost:3000/orders/modify/65f723b5408704322df6fb69 HTTP/1.1
+Content-Type: application/json
+
+{
+        "products":[{"name":"PVC tube 4m 30cm diameter","quantity":3},{"name":"PVC tube 3m","quantity":2}]
+}
+
+### change status 
+
+GET http://localhost:3000/professionals/status/1 HTTP/1.1
+
+
+### admin point of view
+
+### get list of orders (only admin can complete later after authentication implementation)
+GET http://localhost:3000/orders
+
+### remove review 
+DELETE http://localhost:3000/reviews/delete/65f71054d9e86bc61a7095e4

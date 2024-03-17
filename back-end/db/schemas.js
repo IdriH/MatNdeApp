@@ -55,7 +55,9 @@ const professionals_model = new Schema({
         required: true,
         maxlength: 2000
     },
-    reviewScore: Number
+    available : {type: Boolean,default:true},
+    reviewScore: Number,
+    phoneNumber:{type: String,required:true,maxlength:20}
 });
 
 const reviews_model = new Schema({
@@ -74,23 +76,39 @@ const reviews_model = new Schema({
     }
 });
 
+/*maybe in v2
 const availability_model = new Schema({
     professionalID: {
         type: Number,
         required: true
     },
-    occupied_timeslots: {
-        type: [String],
-        required: true
-    } // Assuming this is an array of strings
+    availability: [
+        {
+            date:{
+                type: Date
+            },
+            timeslot: {
+                type: String,
+                required: true
+            },
+            occupied: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ]
 });
+
+export { availability_model };
+
 
 const bookings_model = new Schema({
     professionalID: { type: Number, required: true }, // Add professionalID field
-    timeSlot: { type: Number, required: true },
+    timeSlot: { type: String, required: true },
     message: String,
+    date :{type:Date , required: true},
     timeStamp: { type: Date, default: Date.now } // Add timeStamp field with default value
-}, { timestamps: true });
+}, { timestamps: true });*/
 
 const user_model = new Schema({
     username: {
@@ -108,12 +126,11 @@ const user_model = new Schema({
 });
 
 const order_model = new Schema({
-
     professionalID: {
         type: Number,
         required: true
     },
-    items: {
+    products: [{
         name: {
             type: String,
             required: true
@@ -122,15 +139,16 @@ const order_model = new Schema({
             type: Number,
             required: true
         }
-    }
-},{timestamps:true});
+    }]
+}, { timestamps: true });
+
 
 const Products = mongoose.model("Products", products_model);
 const Professionals = mongoose.model("Professionals", professionals_model);
 const Reviews = mongoose.model("Reviews", reviews_model);
-const Availability = mongoose.model("Availability", availability_model);
-const Bookings = mongoose.model("Bookings", bookings_model);
+//const Availability = mongoose.model("Availability", availability_model);
+//const Bookings = mongoose.model("Bookings", bookings_model);
 const Users = mongoose.model("Users", user_model);
 const Orders = mongoose.model("Orders", order_model);
 
-export { Products, Professionals, Reviews, Availability, Bookings, Users, Orders };
+export { Products, Professionals, Reviews, Users, Orders };

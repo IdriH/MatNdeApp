@@ -20,3 +20,23 @@ export const getProfessional = async(pID) => {
         throw err;
     }
 }
+
+export const toggleStatus = async(pID) => {
+    try {
+        const professional = await Professionals.findOne({ professionalID: pID });
+        if (!professional) {
+            throw new Error("Professional not found");
+        }
+        
+        // Toggle the availability status
+        professional.available = !professional.available;
+
+        // Save the updated professional document
+        await professional.save();
+        
+        return professional;
+    } catch (err) {
+        console.error("Error toggling professional status:", err);
+        throw err;
+    }
+}
