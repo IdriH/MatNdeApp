@@ -109,7 +109,7 @@ app.delete('/reviews/delete/:reviewId', async (req, res) => {
     }
 });
 
-app.get('/orders/:pID',async (req,res) => {
+app.get('/orders/professionals/:pID',async (req,res) => {
     const professionalID = req.params.pID;
     ordersDao.getOrdersForProfessional(professionalID)
     .then(orders => res.status(200).json({data : orders,message:"Orders for professional retrieved"}))
@@ -120,7 +120,7 @@ app.get('/orders/:pID',async (req,res) => {
 
 });
 
-app.get('/orders/:pID/:oID', async(req,res)=>{
+app.get('/orders/professionals/:pID/:oID', async(req,res)=>{
     ordersDao.getOrderForProfessional(req.params.pID,req.params.oID)
     .then(order => res.status(200).json({data:order,message: "order retrieved successfully"}))
     .catch(err => {
@@ -167,6 +167,141 @@ app.get('/professionals/status/:pID',async(req,res) => {
         res.status(500).json({message:"Error:Could not toggle status"});
     })
 })
+
+app.post('/products/add', async (req, res) => {
+    productsDao.addProduct(req.body)
+        .then(product => res.status(200).json({ data: product, message: "Product added successfully" }))
+        .catch(err => {
+            console.error("Error:", err);
+            res.status(500).json({ message: "Error: Could not add product" });
+        });
+});
+
+// Route to modify product 
+app.put('/products/modify', async (req, res) => {
+    try {
+        const productName = req.body.name;
+        const newQuantity = req.body.quantity;
+
+        await productsDao.updateProductQuantity(productName, newQuantity);
+        
+        res.status(200).json({ message: 'Product quantity updated successfully' });
+    } catch (error) {
+        console.error('Error updating product quantity:', error);
+        res.status(500).json({ message: 'Error updating product quantity' });
+    }
+});
+
+// Route to delete a product
+app.delete('/products/delete', async (req, res) => {
+    try {
+        const productName = req.body.name;
+
+        await productsDao.deleteProduct(productName);
+        
+        res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ message: 'Error deleting product' });
+    }
+});
+
+// Route to add a professional
+app.post('/professionals/add', async (req, res) => {
+    try {
+        const newProfessional = req.body;
+
+        await professionalsDao.addProfessional(newProfessional);
+        
+        res.status(200).json({ message: 'Professional added successfully' });
+    } catch (error) {
+        console.error('Error adding professional:', error);
+        res.status(500).json({ message: 'Error adding professional' });
+    }
+});
+
+// Route to modify a professional
+app.put('/professionals/modify', async (req, res) => {
+    try {
+        const professionalID = req.body.professionalID;
+        const updatedFields = req.body;
+
+        await professionalsDao.modifyProfessional(professionalID, updatedFields);
+        
+        res.status(200).json({ message: 'Professional modified successfully' });
+    } catch (error) {
+        console.error('Error modifying professional:', error);
+        res.status(500).json({ message: 'Error modifying professional' });
+    }
+});
+
+// Route to delete a professional
+app.delete('/professionals/delete/:professionalID', async (req, res) => {
+    try {
+        const professionalID = req.params.professionalID;
+
+        await professionalsDao.deleteProfessional(professionalID);
+        
+        res.status(200).json({ message: 'Professional deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting professional:', error);
+        res.status(500).json({ message: 'Error deleting professional' });
+    }
+});
+
+// Route to get a specific order by ID
+app.get('/orders/:orderID', async (req, res) => {
+    try {
+        const orderID = req.params.orderID;
+
+        const order = await ordersDao.getOrderById(orderID);
+        
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        res.status(200).json({ data: order, message: 'Order retrieved successfully' });
+    } catch (error) {
+        console.error('Error retrieving order:', error);
+        res.status(500).json({ message: 'Error retrieving order' });
+    }
+});
+
+// Route to accept an order by ID
+app.put('/orders/accept/:orderID', async (req, res) => {
+    try {
+        
+        const orderID = req.params.orderID;
+        const accepted = req.body.accepted;
+
+        console.log(orderID)
+
+        // Check if order exists
+        const order = await ordersDao.getOrderById(orderID);
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Check if the order has already been accepted
+        if (order.accepted) {
+            return res.status(400).json({ message: 'Order has already been accepted' });
+        }
+
+        // Update the order with the accepted status
+        await ordersDao.acceptOrder(orderID, accepted);
+
+        // Update product inventory
+        await productsDao.updateProductInventory(order.products);
+
+        res.status(200).json({ message: 'Order accepted successfully' });
+    } catch (error) {
+        console.error('Error accepting order:', error);
+        res.status(500).json({ message: 'Error accepting order' });
+    }
+});
+
+
+
 
 
 

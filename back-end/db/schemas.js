@@ -139,7 +139,12 @@ const order_model = new Schema({
             type: Number,
             required: true
         }
-    }]
+    }],
+    accepted: {
+        type : Boolean,
+        default : false
+    }
+
 }, { timestamps: true });
 
 

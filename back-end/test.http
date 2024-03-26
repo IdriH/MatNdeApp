@@ -13,7 +13,7 @@ GET http://localhost:3000/products
 GET http://localhost:3000/professionals
 
 ### get professional 
-GET http://localhost:3000/professional/2
+GET http://localhost:3000/professional/6
 
 ### get reviews 
 GET http://localhost:3000/reviews/2
@@ -34,18 +34,18 @@ Content-Type: application/json
 
 ###get orders professional
 
-GET http://localhost:3000/orders/3
+GET http://localhost:3000/orders/professionals/3
 
 ###get specific order professional
-GET http://localhost:3000/orders/3/65f7195b26dd8330c12c47d3
+GET http://localhost:3000/orders/professionals/3/65f7195b26dd8330c12c47d3
 
 ### add order
 POST http://localhost:3000/orders/add HTTP/1.1
 Content-Type: application/json
 
 {
-    "professionalID":2,
-    "products":[{"name":"PVC tube 4m 30cm diameter","quantity":2},{"name":"PVC tube 3m","quantity":2}]
+    "professionalID":3,
+    "products":[{"name":"Product 1","quantity":2},{"name":"PVC tube 3m","quantity":2}]
 }
 
 ### delete order
@@ -70,5 +70,92 @@ GET http://localhost:3000/professionals/status/1 HTTP/1.1
 ### get list of orders (only admin can complete later after authentication implementation)
 GET http://localhost:3000/orders
 
-### remove review 
+
+### managment of inventory , add remove , modify product 
+
+### Add Product
+POST http://localhost:3000/products/add
+Content-Type: application/json
+
+{
+    "name": "PVC",
+    "category": "Hardware",
+    "distributor": "Distributor A",
+    "manufacturer": "Manufacturer A",
+    "origin": "USA",
+    "priceBought": 100,
+    "priceSold": 150,
+    "quantity": 10
+}
+### Modify Product
+PUT http://localhost:3000/products/modify
+Content-Type: application/json
+
+{
+    "name" : "Product 5",
+    "quantity": 20
+}
+
+### delete product
+DELETE http://localhost:3000/products/delete
+Content-Type: application/json
+
+{
+    "name": "PVC"
+}
+
+
+### handle professionals 
+
+### add professional 
+POST http://localhost:3000/professionals/add HTTP/1.1
+Content-Type: application/json
+
+{
+    "professionalID": 6,
+    "fullName": "John Doe",
+    "age": 30,
+    "ShortDescription": "Experienced plumber.",
+    "reviewScore": 4.5,
+    "phoneNumber": "1234567890"
+}
+
+### modify professional 
+PUT http://localhost:3000/professionals/modify
+Content-Type: application/json
+
+{
+    "professionalID": 6,
+    "fullName": "John Doe",
+    "age": 35,
+    "ShortDescription": "Experienced plumber with over 10 years of experience.",
+    "reviewScore": 4.7,
+    "phoneNumber": "1234567890"
+}
+
+### delete professional
+DELETE http://localhost:3000/professionals/delete/6
+
+### remove review of a professional
 DELETE http://localhost:3000/reviews/delete/65f71054d9e86bc61a7095e4
+
+### handle orders 
+
+### get orders 
+
+GET http://localhost:3000/orders
+
+### get order 
+GET http://localhost:3000/orders/65f7195b26dd8330c12c47ce
+
+### delete order already implemented 
+
+
+### accept order
+PUT http://localhost:3000/orders/accept/65f85556794de74d979d8659
+Content-Type: application/json
+
+{
+    "accepted": true
+}
+

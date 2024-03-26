@@ -40,3 +40,40 @@ export const toggleStatus = async(pID) => {
         throw err;
     }
 }
+
+// Function to add a professional
+export const addProfessional = async (professional) => {
+    try {
+        const newProfessional = Professionals(professional);
+        await newProfessional.save();
+
+        console.log('Professional added successfully');
+    } catch (error) {
+        console.error('Error adding professional:', error);
+        throw error;
+    }
+};
+
+// Function to modify a professional
+export const modifyProfessional = async (professionalID, updatedFields) => {
+    try {
+        await Professionals.updateOne({ professionalID: professionalID }, updatedFields);
+
+        console.log('Professional modified successfully');
+    } catch (error) {
+        console.error('Error modifying professional:', error);
+        throw error;
+    }
+};
+
+// Function to delete a professional
+export const deleteProfessional = async (professionalID) => {
+    try {
+        await Professionals.deleteOne({ professionalID: professionalID });
+
+        console.log('Professional deleted successfully');
+    } catch (error) {
+        console.error('Error deleting professional:', error);
+        throw error;
+    }
+};

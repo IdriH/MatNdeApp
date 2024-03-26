@@ -76,3 +76,25 @@ export const modifyOrder = async (orderID, products) => {
         throw err;
     }
 }
+
+// Function to get a specific order by ID
+export const getOrderById = async (orderID) => {
+    try {
+        const order = await Orders.findById(orderID);
+
+        return order;
+    } catch (error) {
+        console.error('Error retrieving order by ID:', error);
+        throw error;
+    }
+};
+
+// Function to accept an order by ID
+export const acceptOrder = async (orderID, accepted) => {
+    try {
+        await Orders.findByIdAndUpdate(orderID, { accepted: accepted });
+    } catch (error) {
+        console.error('Error accepting order:', error);
+        throw error;
+    }
+};
