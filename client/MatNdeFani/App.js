@@ -1,9 +1,17 @@
 import React from 'react';
-import HomeScreen from './screens/HomeScreen'; // Update the import path
+
+// ... other imports
+import HomeScreen from './screens/HomeScreen';
+import ProductsScreen from './screens/ProductsScreen';
+
+import ModifyProductScreen from './screens/ModifyProductScreen';
+import ProfessionalsScreen from './screens/ProfessionalsScreen';
 
 const App = () => {
+
+
   return (
-    <HomeScreen /> // Render the HomeScreen component
+    <ProfessionalsScreen/>
   );
 };
 
