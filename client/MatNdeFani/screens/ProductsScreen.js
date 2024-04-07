@@ -1,107 +1,112 @@
 // screens/ProductsScreen.js
-import React from 'react';
-import { View, Text, TextInput, FlatList, ImageBackground, StyleSheet , TouchableOpacity} from 'react-native';
-import ProductRow from '../components/ProductRow'
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, FlatList, TouchableOpacity, Animated,ImageBackground } from 'react-native';
+import ProductRow from '../components/ProductRow';
 import styles from '../styles/ProductsScreenStyles';
+import { useUser } from '../state/UserContext';
+import { useOrder } from '../state/OrderContext';
+import { useProducts } from '../state/ProductsContext';
 
+const ProductsScreen = ({ navigation }) => {
+  const { user } = useUser();
+  const { products } = useProducts(); // Assuming useProducts returns an object with a products array
+  const [searchQuery, setSearchQuery] = useState('');
+  const [totalCount, setTotalCount] = useState(0);
+  const [pendingOrder, setPendingOrder] = useState({
+    orderID: 1, // This should be dynamically generated or retrieved in a real application
+    professionalID: user?.id || 1, // Example of setting professionalID based on user context
+    products: [],
+    accepted: false,
+    createdAt: new Date().toISOString(),
+    status: 'pending',
+  });
+  const popAnimation = useRef(new Animated.Value(1)).current;
 
-const dummyProductsData = [
-  {
-    id: '1',
-    name: 'Hammer',
-    category: 'Tools',
-    distributor: 'Global Tools',
-    manufacturer: 'Hammers Inc.',
-    origin: 'USA',
-    priceBought: 19.99,
-    priceSold: 29.99,
-    quantity: 30,
-  },
-  {
-    id: '2',
-    name: 'Drill',
-    category: 'Tools',
-    distributor: 'Global Tools',
-    manufacturer: 'Drills Ltd.',
-    origin: 'Germany',
-    priceBought: 60.00,
-    priceSold: 89.99,
-    quantity: 20,
-  },
-  {
-    id: '3',
-    name: 'Screwdriver Set',
-    category: 'Accessories',
-    distributor: 'Fix-It',
-    manufacturer: 'ScrewThis Company',
-    origin: 'China',
-    priceBought: 10.00,
-    priceSold: 19.99,
-    quantity: 15,
-  },
-  {
-    id: '4',
-    name: 'Circular Saw',
-    category: 'Tools',
-    distributor: 'Cutting Edge',
-    manufacturer: 'SawMakers',
-    origin: 'USA',
-    priceBought: 75.00,
-    priceSold: 129.99,
-    quantity: 10,
-  },
-  {
-    id: '5',
-    name: 'Wrench Set',
-    category: 'Tools',
-    distributor: 'Tool World',
-    manufacturer: 'Spanners & Co.',
-    origin: 'UK',
-    priceBought: 20.00,
-    priceSold: 34.99,
-    quantity: 25,
-  },
-  {
-    id: '6',
-    name: 'Pliers',
-    category: 'Tools',
-    distributor: 'Handy Helpers',
-    manufacturer: 'GripIt',
-    origin: 'USA',
-    priceBought: 5.00,
-    priceSold: 9.99,
-    quantity: 50,
-  },
-  {
-    id: '7',
-    name: 'Laser Level',
-    category: 'Accessories',
-    distributor: 'Level Best',
-    manufacturer: 'LaserLine',
-    origin: 'Sweden',
-    priceBought: 45.00,
-    priceSold: 69.99,
-    quantity: 20,
-  },
-  // ... potentially more products
-];
+  const triggerAnimation = () => {
+    Animated.sequence([
+      Animated.timing(popAnimation, { toValue: 1.2, duration: 100, useNativeDriver: true }),
+      Animated.timing(popAnimation, { toValue: 1, duration: 100, useNativeDriver: true }),
+    ]).start();
+  };
 
+  const addToOrder = (productName, productInfo) => {
+    setPendingOrder((currentOrder) => {
+      const productIndex = currentOrder.products.findIndex(p => p.name === productName);
+      let newProducts = [...currentOrder.products];
 
+      if (productIndex >= 0) {
+        newProducts[productIndex] = { ...newProducts[productIndex], quantity: newProducts[productIndex].quantity + 1 };
+      } else {
+        newProducts.push({ name: productName, quantity: 1, ...productInfo });
+      }
 
-const ProductsScreen = () => {
+      return { ...currentOrder, products: newProducts };
+    });
+  };
 
-  const renderProduct = ({ item }) => (
-    <ProductRow
-      name={item.name}
-      category={item.category}
-      distributor={item.distributor}
-      manufacturer={item.manufacturer}
-      origin={item.origin}
-      priceBought={item.priceBought}
-      priceSold={item.priceSold}
-      quantity={item.quantity}
-    />
+  const removeFromOrder = (productName) => {
+    setPendingOrder((currentOrder) => {
+      const productIndex = currentOrder.products.findIndex(p => p.name === productName);
+      if (productIndex < 0) return currentOrder;
+
+      let newProducts = [...currentOrder.products];
+      if (newProducts[productIndex].quantity > 1) {
+        newProducts[productIndex] = { ...newProducts[productIndex], quantity: newProducts[productIndex].quantity - 1 };
+      } else {
+        newProducts.splice(productIndex, 1);
+      }
+
+      return { ...currentOrder, products: newProducts };
+    });
+  };
+
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const incrementTotalCount = () => {
+    setTotalCount((prevCount) => prevCount + 1);
+    triggerAnimation();
+  };
+
+  const decrementTotalCount = () => {
+    setTotalCount((prevCount) => Math.max(prevCount - 1, 0));
+    triggerAnimation();
+  };
+
+  const navigateToOrderScreen = () => {
+    navigation.navigate('Order', { order: pendingOrder });
+  };
+
+  const renderProduct = ({ item }) => {
+    const handleAdd = () => {
+      incrementTotalCount();
+      addToOrder(item.name, item);
+    };
+
+    const handleRemove = () => {
+      decrementTotalCount();
+      removeFromOrder(item.name);
+    };
+
+    return (
+      <ProductRow
+        id = {item.id}
+        name={item.name}
+        category={item.category}
+        distributor={item.distributor}
+        manufacturer={item.manufacturer}
+        origin={item.origin}
+        priceBought={item.priceBought}
+        priceSold={item.priceSold}
+        quantity={item.quantity}
+        navigation={navigation}
+        onAdd={handleAdd}
+        onRemove={handleRemove}
+      />
+    );
+  };
+
   
   // Replace with your actual background image
   const backgroundImage = require('../assets/homepage.jpg');
@@ -110,16 +115,40 @@ const ProductsScreen = () => {
     <ImageBackground source={backgroundImage} style={styles.backgroundContainer}>
       <View style={styles.container}>
         <Text style={styles.header}>Produkte</Text>
-        <TextInput placeholder="Search for products..." style={styles.searchBox} />
+        <TextInput
+          placeholder="Search for products..."
+          style={styles.searchBox}
+          value={searchQuery}
+          onChangeText={setSearchQuery} // Update searchQuery state on text change
+        />
         <FlatList
-          data={dummyProductsData}
+          data={filteredProducts}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderProduct}
           // The rest of your props
         />
-        <TouchableOpacity style={styles.addButton} onPress={() => {/* handle add product */}}>
-          <Text style={styles.addButtonText}>+ Add Product</Text>
-        </TouchableOpacity>
+        
+        {
+          (user.role ==='admin') ? (
+            
+            <TouchableOpacity style={styles.addButton} onPress={() => {/* handle add product */}}>
+              <Text style={styles.addButtonText} onPress = {() => navigation.navigate('AddProduct')}>+ Add Product</Text>
+            </TouchableOpacity>
+          ) : (user.role === 'professional') ? (
+            
+            <Animated.View 
+            style={[styles.orderCounter, { transform: [{ scale: popAnimation }] }]} // Apply the animated scale here
+          >
+            <TouchableOpacity onPress={navigateToOrderScreen}>
+              <Text style={styles.orderCounterText}>{totalCount}</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          ) : null
+        }
+
+        
+        
+      
       </View>
     </ImageBackground>
   );

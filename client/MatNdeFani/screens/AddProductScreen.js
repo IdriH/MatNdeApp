@@ -2,27 +2,42 @@
 import React from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Button, ImageBackground } from 'react-native';
 import styles from '../styles/ModfiyProductScreenStyles';
+
 import { useState } from 'react';
 
-const ModifyProductScreen = ({ route, navigation }) => {
+const AddProductScreen = () => {
   
+   
 
-  const [name, setName] = useState(route.params.name);
-  const [category, setCategory] = useState(route.params.category);
-  const [distributor, setDistributor] = useState(route.params.distributor);
-  const [manufacturer, setManufacturer] = useState(route.params.manufacturer);
-  const [origin, setOrigin] = useState(route.params.origin);
-  const [priceBought, setPriceBought] = useState(route.params.priceBought.toString());
-  const [priceSold, setPriceSold] = useState(route.params.priceSold.toString());
-  const [quantity, setQuantity] = useState(route.params.quantity.toString());
+    // Local state for new product details
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('');
+  const [distributor, setDistributor] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [origin, setOrigin] = useState('');
+  const [priceBought, setPriceBought] = useState('');
+  const [priceSold, setPriceSold] = useState('');
+  const [quantity, setQuantity] = useState('');
 
+  
   const handleSaveChanges = () => {
     
-    //modify to backend
-    console.log('All good baby baby')
-
+    const newProduct = {
+      id: 111,
+      name : name,
+      category : category,
+      distributor : distributor,
+      manufacturer : manufacturer,
+      origin : origin,
+      priceBought: parseFloat(priceBought),
+      priceSold: parseFloat(priceSold),
+      quantity: parseInt(quantity, 10),
+    };
+    console.log(newProduct)
+    console.log('TEST2')
+    //add product to backend
 }
-
+ 
   return (
             <View style={styles.container}>
                 <Text style={styles.header}>Produkti:</Text>
@@ -30,18 +45,18 @@ const ModifyProductScreen = ({ route, navigation }) => {
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Name</Text>
-                        <TextInput style={styles.input} value={name}  onChangeText={setName}  />
+                        <TextInput style={styles.input} value={name} onChangeText={setName} />
                     </View>
 
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Category</Text>
-                        <TextInput style={styles.input} value={category} onChangeText={setCategory} />
+                        <TextInput style={styles.input} value={category}  onChangeText={setCategory}  />
                     </View>
                         
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Distributor</Text>
-                        <TextInput style={styles.input} value={distributor} onChangeText={setDistributor} />
+                        <TextInput style={styles.input} value={distributor}  onChangeText={setDistributor}  />
                     </View>
                     
                     <View style={styles.inputContainer}>
@@ -51,28 +66,29 @@ const ModifyProductScreen = ({ route, navigation }) => {
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Origin</Text>
-                        <TextInput style={styles.input} value={origin} onChangeText={setOrigin}/>
+                        <TextInput style={styles.input} value={origin} onChangeText={setOrigin} />
                     </View>
 
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Bought</Text>
-                        <TextInput style={styles.input} value={priceBought} onChangeText={setPriceBought}/>
+                        <TextInput style={styles.input} value={priceBought}  onChangeText={setPriceBought}/>
                     </View>
 
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Sold</Text>
-                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold} />
+                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold}  />
                     </View>
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Quantity</Text>
-                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity}/>
+                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity} />
                     </View>
 
                     <View style={styles.buttonContainer}>
-                        <Button title="Save Changes" onPress={ handleSaveChanges } />
+                    <Button title="Save Changes" onPress={handleSaveChanges} />
+
                     </View>
                 </ScrollView>
           </View>
@@ -82,4 +98,4 @@ const ModifyProductScreen = ({ route, navigation }) => {
 
 
 
-export default ModifyProductScreen;
+export default AddProductScreen;

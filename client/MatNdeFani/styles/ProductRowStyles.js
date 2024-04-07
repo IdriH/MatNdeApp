@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
       alignItems: 'flex-end', // Align price and quantity to the right
     },
     priceBought: {
-      textDecorationLine: 'line-through', // Strikethrough style for the bought price
+      
       color: '#ff6347', // Red color for priceBought to indicate cost
       fontSize: 14,
     },
@@ -63,6 +63,31 @@ const styles = StyleSheet.create({
       fontSize: 14,
       color: '#333', // Text color inside the button
     },
+      // Existing styles...
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  actionButton: {
+    backgroundColor: '#007bff', // A visually appealing blue
+    marginLeft: 10, // Spacing between buttons
+    padding: 10,
+    borderRadius: 5, // Rounded corners
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3, // For Android
+  },
+  actionButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   });
 
   export default styles;

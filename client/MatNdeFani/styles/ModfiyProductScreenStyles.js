@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     },
 
     scrollContainer: {
-        width:'70%'
+        width:'90%'
     },
   inputContainer: {
     marginBottom: 20,

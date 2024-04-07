@@ -4,6 +4,8 @@ import { View, Text, TextInput, FlatList, ImageBackground, TouchableOpacity, Sty
 import ProfessionalRow from '../components/ProfessionalRow'; // This needs to be implemented by you
 import styles from '../styles/ProfessionalsScreenStyles';
 
+import { useState } from 'react';
+import { useUser } from '../state/UserContext';
 
 const dummyProfessionalsData = [
     {
@@ -30,7 +32,15 @@ const dummyProfessionalsData = [
   ];
   
 
-const ProfessionalsScreen = () => {
+const ProfessionalsScreen = ({navigation}) => {
+
+  const {user} = useUser();
+  
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredProfessionalsData = dummyProfessionalsData.filter(professional =>
+    professional.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
         const renderProfessional = ({ item }) => (
           <ProfessionalRow
@@ -40,6 +50,7 @@ const ProfessionalsScreen = () => {
             age={item.age}
             available={item.available}
             reviewScore={item.reviewScore}
+            navigation = {navigation}
            
           />
         );
@@ -54,16 +65,25 @@ const ProfessionalsScreen = () => {
     <ImageBackground source={backgroundImage} style={styles.backgroundContainer}>
       <View style={styles.container}>
         <Text style={styles.header}>Professionals</Text>
-        <TextInput placeholder="Search by Category." style={styles.searchBox} />
+        <TextInput
+          placeholder="Search by Category."
+          style={styles.searchBox}
+          value={searchQuery}
+          onChangeText={text => setSearchQuery(text)} // Update searchQuery state on text change
+        />
+
         <FlatList
-          data={dummyProfessionalsData}
+          data={filteredProfessionalsData}
           keyExtractor={(item) => item.professionalID}
           renderItem={renderProfessional}
           // The rest of your props
         />
-        <TouchableOpacity style={styles.addButton} onPress={() => {/* handle add professional */}}>
+        {(user.role === 'admin')?(
+          <TouchableOpacity style={styles.addButton} onPress={() => {/* handle add professional */}}>
           <Text style={styles.addButtonText}>+ Add Professional</Text>
         </TouchableOpacity>
+        ):(null)}
+        
       </View>
     </ImageBackground>
   );

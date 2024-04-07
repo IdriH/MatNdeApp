@@ -61,7 +61,15 @@ const styles = StyleSheet.create({
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 2,
-    }
+    },
+    availabilityContainer: {
+      marginTop: 30, // Adjust the space from the Orders section or above content as needed
+      alignItems: 'center', // Center horizontally in the container
+      width: '100%', // Ensure it spans the full width for proper centering
+      left: 20, // Distance from the left
+      flexDirection: 'row', // Align button and status indicator horizontally
+          
+    },
     
   });
 

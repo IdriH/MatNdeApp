@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const products_model = new Schema({
-
+    //to be added id 
     name : {
         type: String,
         required : true,
@@ -125,7 +125,13 @@ const user_model = new Schema({
     role: { type: String, required: true }
 });
 
+//schema to add orderID,status
 const order_model = new Schema({
+    /*
+    orderID: {
+
+    },
+    */
     professionalID: {
         type: Number,
         required: true
@@ -144,7 +150,9 @@ const order_model = new Schema({
         type : Boolean,
         default : false
     }
-
+    /*
+    status: {} , // 'accepted' , 'pending','declined'
+    */
 }, { timestamps: true });
 
 
