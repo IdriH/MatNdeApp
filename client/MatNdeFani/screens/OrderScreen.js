@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { submitOrder } from '../services/api';
 
 const OrderScreen = ({ route, navigation }) => {
   const [order, setOrder] = useState(route.params.order);
@@ -21,6 +22,36 @@ const OrderScreen = ({ route, navigation }) => {
     }
     setOrder(newOrder);
   };
+
+  const handleConfirm = async () => {
+    // Assuming `order` state contains the current order details including products
+    const orderData = {
+        professionalID: order.professionalID,
+        products: order.products.map(product => ({
+            name: product.name,
+            quantity: product.quantity,
+        })),
+        status: 'pending', // Or set based on current order state if it can be different
+    };
+
+    try {
+        const result = await submitOrder(orderData);
+        console.log('Order submitted successfully', result);
+        navigation.navigate('Home');
+    } catch (error) {
+        console.error('Failed to submit order:', error);
+        // Optionally, handle the error in UI (e.g., show an error message)
+    }
+};
+
+const handleCancel = () => {
+  if (route.params.resetOrder) {
+      route.params.resetOrder(); // This will reset the order in ProductsScreen
+  }
+  navigation.goBack();
+};
+
+
   const renderOrderItem = ({ item, index }) => (
     <View style={styles.orderItem}>
       <Text style={styles.orderTitle}>{item.name} x {item.quantity}</Text>
@@ -49,11 +80,11 @@ const OrderScreen = ({ route, navigation }) => {
         />
         
         {/* Confirm Button */}
-        <TouchableOpacity style={styles.confirmButton} onPress={() => {/* Handle confirm action */}}>
+        <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
           <Text style={styles.buttonText}>Confirm</Text>
         </TouchableOpacity>
         {/* Cancel Button */}
-        <TouchableOpacity style={styles.cancelButton} onPress={() => {/* Handle cancel action */}}>
+        <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
       </View>

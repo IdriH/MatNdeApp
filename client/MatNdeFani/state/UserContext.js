@@ -3,10 +3,11 @@ import React, { createContext, useContext, useState } from 'react';
 
 const UserContext = createContext();
 export const dummyUser = {
+    id : 1,
     username: "johndoe",
     password: "encryptedpassword", // In real application, passwords wouldn't be stored or passed like this.
     refreshToken: "someRefreshToken",
-    role: "user" // Can be "Admin", "professional", or "User"
+    role: "admin" // Can be "Admin", "professional", or "User"
   };
   
 export const useUser = () => useContext(UserContext);

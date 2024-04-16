@@ -1,8 +1,10 @@
 // screens/ModifyProductScreen.js
 import React from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Button, ImageBackground } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, Button, ImageBackground,Alert } from 'react-native';
 import styles from '../styles/ModfiyProductScreenStyles';
 import { useState } from 'react';
+import { updateProduct } from '../services/api';
+import { useProducts } from '../state/ProductsContext';
 
 const ModifyProductScreen = ({ route, navigation }) => {
   
@@ -16,12 +18,36 @@ const ModifyProductScreen = ({ route, navigation }) => {
   const [priceSold, setPriceSold] = useState(route.params.priceSold.toString());
   const [quantity, setQuantity] = useState(route.params.quantity.toString());
 
-  const handleSaveChanges = () => {
-    
-    //modify to backend
-    console.log('All good baby baby')
+  const {updateProductsOptimistic} = useProducts();
 
-}
+  const handleSaveChanges = async () => {
+    const updatedProduct = {
+      id: route.params.id, // Ensure this is correctly passed
+      name,
+      category,
+      distributor,
+      manufacturer,
+      origin,
+      priceBought,
+      priceSold,
+      quantity,
+    };
+  
+    try {
+      const result = await updateProduct(route.params.id, updatedProduct);
+      if (result) {
+        updateProductsOptimistic({...updatedProduct, _id: route.params.id}); // Make sure to pass all needed fields
+        Alert.alert('Success', 'Product updated successfully', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        throw new Error("Update was not successful");
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update product: ' + error.message);
+    }
+  };
+  
 
   return (
             <View style={styles.container}>

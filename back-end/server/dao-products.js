@@ -12,7 +12,7 @@ import {Products} from '../db/schemas.js'
 export const getProducts = async () => {
     try {
         const products = await Products.find();
-        console.log(products)
+        
         return products; // Simply return the products
     } catch (err) {
         console.error('Error: Could not retrieve products', err);
@@ -22,6 +22,7 @@ export const getProducts = async () => {
 
 export const addProduct = async (productData) => {
     try {
+        console.log(productData)
         const newProduct = new Products(productData);
         await newProduct.save();
         return newProduct;
@@ -91,3 +92,25 @@ export const updateProductInventory = async (products) => {
 };
 
 
+// Function to update a product by ID with dynamic fields
+export const updateProduct = async (productId, updateData) => {
+    try {
+        console.log('called Update PRoduct')
+        // Validate updateData to ensure it does not contain fields that shouldn't be updated directly
+        if(updateData._id || updateData.__v) {
+            throw new Error('Invalid update parameters');
+        }
+
+        const product = await Products.findByIdAndUpdate(productId, { $set: updateData }, { new: true, runValidators: true });
+
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        console.log('Product updated successfully:', product);
+        return product; // Return the updated product
+    } catch (error) {
+        console.error('Error updating product:', error);
+        throw error; // Rethrow to handle it in the calling function
+    }
+};

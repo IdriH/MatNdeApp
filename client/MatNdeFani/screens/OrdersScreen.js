@@ -2,15 +2,31 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useOrder } from '../state/OrderContext';
 import { useUser } from '../state/UserContext';
-
+import { fetchOrdersForProfessional } from '../services/api';
+import { useState,useEffect } from 'react';
 //import styles from '../styles/OrdersScreenStyles';
 // Dummy data for orders
 
 const OrdersScreen = () => {
 
-  const {orders} = useOrder();
-  const {user} = useUser();
+  const { user } = useUser();
+  const [orders, setOrders] = useState([]);
 
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+       
+          const fetchedOrders = await fetchOrdersForProfessional(user.id);
+          setOrders(fetchedOrders);
+        
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        // Handle the error appropriately
+      }
+    };
+
+    loadOrders();
+  }, []);
 
   const renderProduct = ({ item }) => (
     <View style={styles.productItem}>
@@ -18,27 +34,27 @@ const OrdersScreen = () => {
     </View>
   );
 
-  const calculateTotal = (products) => products.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+  //const calculateTotal = (products) => products.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
   const renderOrder = ({ item }) => {
     const formattedDate = new Date(item.createdAt).toLocaleString(); // Convert timestamp to readable format
     return (
       <View style={styles.orderItem}>
-        <Text style={styles.orderProfName}>Professional ID: {item.professionalID}</Text>
+        <Text style={styles.orderProfName}>Professional ID: {item.professionalID.toString()}</Text>
         <FlatList
           data={item.products}
           renderItem={renderProduct}
-          keyExtractor={(item, index) => `product-${index}`}
+          keyExtractor={(item) => item._id.toString()}
         />
-        <Text style={styles.totalText}>Total: ${calculateTotal(item.products)}</Text>
-        <Text style={styles.statusText}>Status: {item.accepted ? 'Accepted' : 'Not Accepted'}</Text>
+        {/*<Text style={styles.totalText}>Total: ${calculateTotal(item.products)}</Text>*/}
+        <Text style={styles.statusText}>Status: {item.status}</Text> 
         <Text style={styles.timestampText}>Date: {formattedDate}</Text>
         {(user.role === 'admin')?(
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.acceptButton}>
+          <TouchableOpacity style={styles.acceptButton} onPress={() => {/* Handle accept action here */}}>
             <Text style={styles.buttonText}>Accept</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.removeButton}>
+          <TouchableOpacity style={styles.removeButton} onPress={() => {/* Handle remove action here */}}>
             <Text style={styles.buttonText}>Remove</Text>
           </TouchableOpacity>
         </View>):(null)
@@ -46,14 +62,14 @@ const OrdersScreen = () => {
       </View>
     );
   };
-
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Orders</Text>
       <FlatList
         data={orders}
         renderItem={renderOrder}
-        keyExtractor={(item) => item.createdAt.toString()}
+        keyExtractor={(item) => item._id.toString()}
       />
     </View>
   );

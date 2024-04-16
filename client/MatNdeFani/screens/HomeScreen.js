@@ -8,7 +8,7 @@ import { useUser } from '../state/UserContext';
 
 
 // Add navigation prop to the component's parameters
-const HomeScreen = ({ navigation, isAdmin = true, isProfessional = false }) => {
+const HomeScreen = ({ navigation}) => {
   const {user} = useUser();
  
   
@@ -32,7 +32,7 @@ const HomeScreen = ({ navigation, isAdmin = true, isProfessional = false }) => {
           )}
           {(user.role ==='professional') && (
             <View style={styles.availabilityContainer}>
-              <AvailabilityIndicator />
+              <AvailabilityIndicator professionalID = {user.id}/>
             </View>
           )}
           <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>

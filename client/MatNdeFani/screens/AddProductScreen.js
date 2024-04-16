@@ -1,15 +1,10 @@
-// screens/ModifyProductScreen.js
-import React from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Button, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, ScrollView, StyleSheet, Button, Alert } from 'react-native';
 import styles from '../styles/ModfiyProductScreenStyles';
+import { addProduct } from '../services/api'; // Import the API method
+import { useProducts } from '../state/ProductsContext';
 
-import { useState } from 'react';
-
-const AddProductScreen = () => {
-  
-   
-
-    // Local state for new product details
+const AddProductScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [distributor, setDistributor] = useState('');
@@ -19,27 +14,38 @@ const AddProductScreen = () => {
   const [priceSold, setPriceSold] = useState('');
   const [quantity, setQuantity] = useState('');
 
-  
-  const handleSaveChanges = () => {
-    
+  const { addProductOptimistic } = useProducts();
+
+  const handleSaveChanges = async () => {
     const newProduct = {
-      id: 111,
-      name : name,
-      category : category,
-      distributor : distributor,
-      manufacturer : manufacturer,
-      origin : origin,
-      priceBought: parseFloat(priceBought),
-      priceSold: parseFloat(priceSold),
-      quantity: parseInt(quantity, 10),
+      name,
+      category,
+      distributor,
+      manufacturer,
+      origin,
+      priceBought,
+      priceSold,
+      quantity,
     };
-    console.log(newProduct)
-    console.log('TEST2')
-    //add product to backend
-}
- 
+
+    try {
+        const result = await addProduct(newProduct);
+        Alert.alert('Success', 'Product added successfully', [
+          {
+            text: 'OK',
+            onPress: () => navigation.goBack(),  // Navigating back on success
+          }
+         
+        ]);
+        addProductOptimistic(result.data);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add product: ' + error.message);
+      console.error('TEST2', error);
+    }
+  };
+
   return (
-            <View style={styles.container}>
+    <View style={styles.container}>
                 <Text style={styles.header}>Produkti:</Text>
                 <ScrollView style={styles.scrollContainer}>
                     

@@ -3,6 +3,9 @@
 const PORT = 3000;
 
 import express from 'express'
+import morgan from 'morgan'
+import fs from 'fs'
+import path from 'path'
 import connectDb from '../db/connection.js'
 
 import * as productsDao from './dao-products.js';
@@ -13,8 +16,14 @@ import * as reviewsDao from './dao-reviews.js'
 //import * as availabilitiesDao from './dao-availabilities.js'
 
 const app = express();
+
 app.use(express.json())
 connectDb();
+
+const accessLogStream = fs.createWriteStream(path.join('./', 'access.log'), { flags: 'a' });
+
+// Save log entries to a file
+app.use(morgan('combined', { stream: accessLogStream }));
 
 
 app.get('/',(req,res) =>{
@@ -75,6 +84,7 @@ app.get('/professional/:professionalID' , (req,res)=> {
 
 app.get('/reviews/:professionalID',(req,res)=>{
     console.log(req.params.professionalID)
+    console.log(req.params.name)
     reviewsDao.getReviews(req.params.professionalID)
     .then(reviews => res.status(200).json({data: reviews,message : "Successfully retrieved reviews"}))
     .catch(err => {
@@ -84,7 +94,7 @@ app.get('/reviews/:professionalID',(req,res)=>{
 })
 
 app.post('/reviews/add',(req,res)=>{
-    console.log(req.body);
+   console.log(req.body)
     reviewsDao.addReview(req.body)
     .then(review => res.status(200).json({data:review,messge : "Successfully added review!"}))
     .catch(err =>{
@@ -111,6 +121,7 @@ app.delete('/reviews/delete/:reviewId', async (req, res) => {
 
 app.get('/orders/professionals/:pID',async (req,res) => {
     const professionalID = req.params.pID;
+    console.log("%%%%%%%%%%%%0" + professionalID)
     ordersDao.getOrdersForProfessional(professionalID)
     .then(orders => res.status(200).json({data : orders,message:"Orders for professional retrieved"}))
     .catch(err =>{
@@ -177,20 +188,25 @@ app.post('/products/add', async (req, res) => {
         });
 });
 
-// Route to modify product 
-app.put('/products/modify', async (req, res) => {
-    try {
-        const productName = req.body.name;
-        const newQuantity = req.body.quantity;
+// Route to modify product by ID
+app.put('/products/modify/:id', async (req, res) => {
+    console.log('called route')
+    const { id } = req.params;
+    const updateData = req.body; // Get update data from request body
 
-        await productsDao.updateProductQuantity(productName, newQuantity);
-        
-        res.status(200).json({ message: 'Product quantity updated successfully' });
+    try {
+        const updatedProduct = await productsDao.updateProduct(id, updateData);
+        if (updatedProduct) {
+            res.status(200).json({ message: 'Product updated successfully', data: updatedProduct });
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
     } catch (error) {
-        console.error('Error updating product quantity:', error);
-        res.status(500).json({ message: 'Error updating product quantity' });
+        console.error('Error updating product:', error);
+        res.status(500).json({ message: 'Error updating product', error: error.message });
     }
 });
+
 
 // Route to delete a product
 app.delete('/products/delete', async (req, res) => {

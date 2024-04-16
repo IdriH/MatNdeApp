@@ -13,10 +13,10 @@ GET http://localhost:3000/products
 GET http://localhost:3000/professionals
 
 ### get professional 
-GET http://localhost:3000/professional/6
+GET http://localhost:3000/professional/1
 
 ### get reviews 
-GET http://localhost:3000/reviews/2
+GET http://localhost:3000/reviews/1
 
 
 ### add review
@@ -24,17 +24,17 @@ POST http://localhost:3000/reviews/add HTTP/1.1
 Content-Type: application/json
 
 {
-    "professionalID": 2,
+    "professionalID": 3,
     "reviewerName": "Filan Fisteku",
     "score": 4,
-    "comment": "Well done job with my sink"
+    "comment": "Well  job with my sink"
 }
 
 ### -------------------Professional point of view
 
 ###get orders professional
 
-GET http://localhost:3000/orders/professionals/3
+GET http://localhost:3000/orders/professionals/1
 
 ###get specific order professional
 GET http://localhost:3000/orders/professionals/3/65f7195b26dd8330c12c47d3
@@ -78,7 +78,7 @@ POST http://localhost:3000/products/add
 Content-Type: application/json
 
 {
-    "name": "PVC",
+    "name": "TOOLTOO",
     "category": "Hardware",
     "distributor": "Distributor A",
     "manufacturer": "Manufacturer A",
@@ -88,14 +88,19 @@ Content-Type: application/json
     "quantity": 10
 }
 ### Modify Product
-PUT http://localhost:3000/products/modify
+PUT http://localhost:3000/products/modify/65ef3ceb2f3d06c84f48ddde
 Content-Type: application/json
 
 {
-    "name" : "Product 5",
-    "quantity": 20
+    "name": "Product 11",
+    "category": "Hardware",
+    "distributor": "Distributor A",
+    "manufacturer": "Manufacturer A",
+    "origin": "USA",
+    "priceBought": 100,
+    "priceSold": 150,
+    "quantity": 10
 }
-
 ### delete product
 DELETE http://localhost:3000/products/delete
 Content-Type: application/json

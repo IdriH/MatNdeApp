@@ -2,69 +2,77 @@ import React from 'react';
 import {Dimensions, TextInput,ScrollView, View, Text, Image, StyleSheet, FlatList,TouchableOpacity } from 'react-native';
 import { Linking } from 'react-native';
 import styles from '../styles/ViewProfessionalScreenStyles';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useUser } from '../state/UserContext';
+import { fetchProfessional,fetchReviewsForProfessional } from '../services/api';
 
-const professional = {
-  professionalID: 1,
-  fullName: 'Alex Johnson',
-  category: 'Electrician',
-  dateOfBirth: '10/10/2000',
-  available: true,
-  reviewScore: 4.7,
-  ShortDescription: 'Experienced and reliable electrician specializing in residential electrical services. Certified and insured, committed to safety and quality.',
-  phoneNumber: '+355695776284',
-  
-  reviews: [
-    {
-      id: 1,
-      text: 'Alex did an amazing job fixing our electrical panel. Very professional and timely.',
-      rating: 5,
-    },
-    {
-      id: 2,
-      text: 'Great service, Alex was very thorough and explained everything clearly. Highly recommend!',
-      rating: 4.5,
-    },
-    {
-      id: 3,
-      text: 'Alex was able to solve a problem that we had for months. Extremely satisfied with the work.',
-      rating: 4.8,
-    },
-    {
-      id: 4,
-      text: 'Alex did an amazing job fixing our electrical panel. Very professional and timely.',
-      rating: 5,
-    },
-    {
-      id: 5,
-      text: 'Great service, Alex was very thorough and explained everything clearly. Highly recommend!',
-      rating: 4.5,
-    },
-    {
-      id: 6,
-      text: 'Alex was able to solve a problem that we had for months. Extremely satisfied with the work.',
-      rating: 4.8,
-    },
-    {
-      id: 7,
-      text: 'Great service, Alex was very thorough and explained everything clearly. Highly recommend!',
-      rating: 4.5,
-    },
-    {
-      id: 8,
-      text: 'Alex was able to solve a problem that we had for months. Extremely satisfied with the work.',
-      rating: 4.8,
-    },
-  ],
-};
-
-const ViewProfessionalScreen = ({navigation }) => {
+const ViewProfessionalScreen = ({ route, navigation }) => {
+  const { professionalID } = route.params;
 
     const {user} = useUser();
 
+    const [professional,setProfessional] = useState({});
+
+    
+    useEffect(() => {
+      const loadProfessional = async () => {
+        try {
+          console.log('Fetching details for ProfessionalID:', professionalID);
+          const professionalFromApi = await fetchProfessional(professionalID);
+          setProfessional(professionalFromApi); // Assuming the API returns the professional object directly
+        } catch (error) {
+          console.error('Failed to fetch professional:', error);
+          // Implement error handling here
+        }
+      };
+      if (professionalID) {
+        loadProfessional();
+      }
+    }, []); // Do optimistic update or some kind of fetcheverytime 
    
+    const [reviews, setReviews] = useState(professional.reviews);
    
+    useEffect(() => {
+      const loadReviewsForProfessional = async () => {
+        try {
+          console.log('Fetching details for ProfessionalID:', professionalID);
+          const reviewsFromApi = await fetchReviewsForProfessional(professionalID);
+          console.log(reviewsFromApi)
+          setReviews(reviewsFromApi); // Assuming the API returns the professional object directly
+        } catch (error) {
+          console.error('Failed to fetch reviews for professional:', error);
+          // Implement error handling here
+        }
+      };
+      if (professionalID) {
+        loadReviewsForProfessional();
+      }
+    }, []); // Depend on professionalID to refetch if it changes optimistic update or infinite loop
+
+    //everytime user navigates back the reviews are refetched 
+   // This useEffect listens for focus events
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    const loadReviewsForProfessional = async () => {
+      try {
+        console.log('Fetching details for ProfessionalID:', professionalID);
+        const reviewsFromApi = await fetchReviewsForProfessional(professionalID);
+        console.log(reviewsFromApi)
+        setReviews(reviewsFromApi); // Assuming the API returns the professional object directly
+      } catch (error) {
+        console.error('Failed to fetch reviews for professional:', error);
+        // Implement error handling here
+      }
+    };
+    if (professionalID) {
+      loadReviewsForProfessional();
+    }
+  });
+
+  return unsubscribe;
+}, [navigation]);
+
+
     const handlePressPhoneNumber = () => {
     const url = `tel:${professional.phoneNumber}`;
     Linking.canOpenURL(url)
@@ -79,20 +87,21 @@ const ViewProfessionalScreen = ({navigation }) => {
   };
 
       
-  const [reviews, setReviews] = useState(professional.reviews);
+ 
 
-  const addReview = (newReview) => {
-      setReviews(currentReviews => [...currentReviews, { ...newReview, id: currentReviews.length + 1 }]);
-  };
 
   const navigateToAddReview = () => {
-    navigation.navigate('AddReview', { addReview });
+    navigation.navigate('AddReview', {
+      professionalID, // Assuming professionalID is available in this scope
+    });
 };
 
   const renderReview = ({ item }) => (
+    
     <View style={styles.review}>
-      <Text style={styles.reviewText}>{item.text}</Text>
-      <Text style={styles.reviewRating}>Rating: {item.rating}</Text>
+      <Text style={styles.reviewText}>{item.reviewerName}</Text>
+      <Text style={styles.reviewText}>{item.comment}</Text>
+      <Text style={styles.reviewRating}>Rating: {item.score}</Text>
       {(user.role === 'admin')  && (
         <TouchableOpacity style={styles.deleteButton} >
           <Text style = {styles.deleteButtonText}>Delete</Text>
@@ -168,7 +177,7 @@ const img = require('../assets/AnonimProfPic.jpg');
       <Text style = {{fontSize : 16}}>Customer Reviews:</Text>
       <FlatList
         data={reviews} // Assuming reviews is a list of review objects
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id.toString()}
         renderItem={renderReview}
       />
       {!(user.role === 'admin')  ? (

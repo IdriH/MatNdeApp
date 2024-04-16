@@ -1,23 +1,36 @@
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet,TouchableWithoutFeedback } from 'react-native';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { submitReview } from '../services/api';
 
 const AddReviewScreen = ({navigation,route}) => {
     const [name, setName] = useState('');
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(5);
 
-    const handleConfirm = () => {
-        // Call the addReview function passed via navigation
-        if (route.params?.addReview) {
-            route.params.addReview({
-                name,
-                text: review,
-                rating,
-                // Add any other review details here
-            });
+    const {  professionalID } = route.params; // Destructuring to get addReview and professionalID
+
+    
+
+
+
+    const handleConfirm = async () => {
+       
+        const reviewData = {
+            professionalID, // Make sure this matches the type expected by the schema (Number).
+            reviewerName: name, // Changed from 'name' to 'reviewerName'.
+            score: rating, // Changed from 'rating' to 'score'.
+            comment: review, // Changed from 'text' to 'comment'.
+        };
+    
+        try {
+            await submitReview(reviewData);
+            console.log('Review added successfully');
+            navigation.goBack(); // Navigate back after adding the review
+        } catch (error) {
+            console.error('Failed to add review:', error);
+            // Optionally, handle the error in UI (e.g., show a message to the user)
         }
-        navigation.goBack(); // Navigate back after adding the review
     };
 
     const handleCancel = () => {

@@ -1,59 +1,46 @@
-// screens/ProfessionalsScreen.js
-import React from 'react';
-import { View, Text, TextInput, FlatList, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, FlatList, ImageBackground, TouchableOpacity } from 'react-native';
 import ProfessionalRow from '../components/ProfessionalRow'; // This needs to be implemented by you
 import styles from '../styles/ProfessionalsScreenStyles';
 
-import { useState } from 'react';
 import { useUser } from '../state/UserContext';
+import { fetchProfessionals } from '../services/api';
 
-const dummyProfessionalsData = [
-    {
-      professionalID: 1,
-      fullName: 'John Doe',
-      category: 'plumber',
-      age: 35,
-      ShortDescription: 'Experienced electrician specializing in residential and commercial installations.',
-      available: true,
-      reviewScore: 4.5,
-      phoneNumber: '123-456-7890',
-    },
-    {
-      professionalID: 2,
-      category: 'Electrician',
-      fullName: 'Jane Smith',
-      age: 42,
-      ShortDescription: 'Licensed plumber with over 8 years of experience in a wide range of plumbing services.',
-      available: true,
-      reviewScore: 4.7,
-      phoneNumber: '098-765-4321',
-    },
-    // Add more professionals as needed
-  ];
-  
-
-const ProfessionalsScreen = ({navigation}) => {
-
-  const {user} = useUser();
-  
+const ProfessionalsScreen = ({ navigation }) => {
+  const { user } = useUser();
+  const [professionals, setProfessionals] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredProfessionalsData = dummyProfessionalsData.filter(professional =>
+  useEffect(() => {
+    const loadProfessionals = async () => {
+      try {
+        const professionalsFromApi = await fetchProfessionals();
+        setProfessionals(professionalsFromApi); // Assuming the API returns the array of professionals directly
+      } catch (error) {
+        console.error('Failed to fetch professionals:', error);
+        // Implement error handling here
+      }
+    };
+    loadProfessionals();
+  }, []);
+
+  // Filter professionals based on the search query
+  const filteredProfessionals = professionals.filter(professional =>
     professional.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-        const renderProfessional = ({ item }) => (
-          <ProfessionalRow
-            professionalID ={item.professionalID}
-            fullName={item.fullName}
-            category={item.category}
-            age={item.age}
-            available={item.available}
-            reviewScore={item.reviewScore}
-            navigation = {navigation}
-           
-          />
-        );
+  const renderProfessional = ({ item }) => (
+    <ProfessionalRow
+      professionalID={item.professionalID}
+      fullName={item.fullName}
+      category={item.category}
+      
+      //shortDescription = {item.ShortDescription}
+      available={item.available}
+      reviewScore={item.reviewScore}
+      navigation={navigation}
+    />
+  );
       
      
       
@@ -73,7 +60,7 @@ const ProfessionalsScreen = ({navigation}) => {
         />
 
         <FlatList
-          data={filteredProfessionalsData}
+          data={filteredProfessionals}
           keyExtractor={(item) => item.professionalID}
           renderItem={renderProfessional}
           // The rest of your props

@@ -1,12 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { toggleProfessionalStatus ,fetchProfessional } from '../services/api';
 
-const AvailabilityIndicator = () => {
+const AvailabilityIndicator = ({professionalID}) => {
   const [isAvailable, setIsAvailable] = useState(false); // Initial availability status
 
-  const toggleAvailability = () => {
-    setIsAvailable(!isAvailable);
-    // Update the professional's availability status in your database or state management solution
+  
+  const loadInitialStatus = async () => {
+    try {
+        const response = await fetchProfessional(professionalID);
+        if (response ) {
+            const status = response.available; // Ensure that 'data' and 'available' are correctly accessed
+            setIsAvailable(status);
+        } else {
+            throw new Error('Invalid response structure'); // Handles cases where the data might not be as expected
+        }
+    } catch (error) {
+        console.error('Error loading initial status:', error);
+    }
+};
+loadInitialStatus();
+
+   // Function to toggle availability and update on the server
+   const toggleAvailability = async () => {
+    try {
+      const result = await toggleProfessionalStatus(professionalID);
+      if (result.data && result.data.available !== undefined) {
+        setIsAvailable(result.data.available); // Update based on the server's response
+      }
+    } catch (error) {
+      console.error('Failed to toggle availability:', error);
+    }
   };
 
   return (

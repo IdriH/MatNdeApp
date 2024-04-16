@@ -1,25 +1,42 @@
 // screens/ProductsScreen.js
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, Animated,ImageBackground } from 'react-native';
 import ProductRow from '../components/ProductRow';
 import styles from '../styles/ProductsScreenStyles';
+import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../state/UserContext';
 import { useOrder } from '../state/OrderContext';
 import { useProducts } from '../state/ProductsContext';
+import { fetchProducts } from '../services/api';
 
 const ProductsScreen = ({ navigation }) => {
   const { user } = useUser();
   const { products } = useProducts(); // Assuming useProducts returns an object with a products array
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [pendingOrder, setPendingOrder] = useState({
-    orderID: 1, // This should be dynamically generated or retrieved in a real application
-    professionalID: user?.id || 1, // Example of setting professionalID based on user context
+    // orderID is usually assigned by the backend; assuming it's here as a placeholder
+    professionalID: user?.id || 1, // Dynamically setting professionalID based on user context
     products: [],
-    accepted: false,
-    createdAt: new Date().toISOString(),
-    status: 'pending',
-  });
+    status: 'pending', // Setting the initial order status to 'pending'
+    createdAt: new Date().toISOString(), // You might let the backend handle `createdAt` timestamps
+});
+
+  // Refetch products when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const fetchAndUpdateProducts = async () => {
+        await fetchProducts();
+      };
+
+      fetchAndUpdateProducts();
+    }, [])
+  );
+
+  
+ 
+  
   const popAnimation = useRef(new Animated.Value(1)).current;
 
   const triggerAnimation = () => {
@@ -31,15 +48,23 @@ const ProductsScreen = ({ navigation }) => {
 
   const addToOrder = (productName, productInfo) => {
     setPendingOrder((currentOrder) => {
+      // Check if the product already exists in the order
       const productIndex = currentOrder.products.findIndex(p => p.name === productName);
-      let newProducts = [...currentOrder.products];
-
+      let newProducts;
+  
       if (productIndex >= 0) {
-        newProducts[productIndex] = { ...newProducts[productIndex], quantity: newProducts[productIndex].quantity + 1 };
+        // Product exists, update the quantity
+        newProducts = currentOrder.products.map((p, index) => {
+          if (index === productIndex) {
+            return { ...p, quantity: p.quantity + 1 }; // Increment quantity
+          }
+          return p;
+        });
       } else {
-        newProducts.push({ name: productName, quantity: 1, ...productInfo });
+        // Product does not exist, add it with quantity of 1
+        newProducts = [...currentOrder.products, { ...productInfo, quantity: 1 }];
       }
-
+  
       return { ...currentOrder, products: newProducts };
     });
   };
@@ -62,7 +87,7 @@ const ProductsScreen = ({ navigation }) => {
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const incrementTotalCount = () => {
     setTotalCount((prevCount) => prevCount + 1);
@@ -73,10 +98,21 @@ const ProductsScreen = ({ navigation }) => {
     setTotalCount((prevCount) => Math.max(prevCount - 1, 0));
     triggerAnimation();
   };
-
   const navigateToOrderScreen = () => {
-    navigation.navigate('Order', { order: pendingOrder });
-  };
+    navigation.navigate('Order', { 
+        order: pendingOrder,  
+        resetOrder: () => {
+            setTotalCount(0);
+            setPendingOrder({
+                professionalID: user?.id || 1, // Reset to initial state as per your logic
+                products: [],
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+            });
+        }
+    });
+};
+
 
   const renderProduct = ({ item }) => {
     const handleAdd = () => {
@@ -91,7 +127,7 @@ const ProductsScreen = ({ navigation }) => {
 
     return (
       <ProductRow
-        id = {item.id}
+        id = {item._id}
         name={item.name}
         category={item.category}
         distributor={item.distributor}
@@ -123,7 +159,7 @@ const ProductsScreen = ({ navigation }) => {
         />
         <FlatList
           data={filteredProducts}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item._id}
           renderItem={renderProduct}
           // The rest of your props
         />

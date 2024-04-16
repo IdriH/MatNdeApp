@@ -10,13 +10,19 @@ export const getOrders = async () =>{
     }
 }
 
-export const getOrdersForProfessional = async(pID) =>{
-    try{
-        const orders = await Orders.find({professionalID : pID});
-        return orders ;
+export const getOrdersForProfessional = async(pID) => {
+    try {
+        console.log("^^^^^^^^^^^^^^^^^^" + pID)
+        const numericProfessionalID = Number(pID); // Convert to number
+        if (isNaN(numericProfessionalID)) {
+            throw new Error("Professional ID is not a valid number");
+        }
 
-    }catch(err){
-        console.error("Could not retrieve orders for professional");
+        const orders = await Orders.find({ professionalID: numericProfessionalID });
+        return orders;
+
+    } catch (err) {
+        console.error("Could not retrieve orders for professional", err);
         throw err;
     }
 }

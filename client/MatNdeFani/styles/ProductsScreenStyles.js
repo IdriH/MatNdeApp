@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
   orderCounter: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    left: 20,
     backgroundColor: '#FFA500',
     padding: 12,
     borderRadius: 50,
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 10, // Add shadow for Android

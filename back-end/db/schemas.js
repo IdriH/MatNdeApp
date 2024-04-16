@@ -42,12 +42,16 @@ const professionals_model = new Schema({
         type : Number,
         required :true
     },
+    category : { 
+        type : String,
+        required: true,
+    },
     fullName : {
         type: String,
         required: true
     },
-    age: {
-        type: Number,
+    dateOfBirth: {
+        type: Date,
         required: true
     },
     ShortDescription: {
@@ -146,13 +150,11 @@ const order_model = new Schema({
             required: true
         }
     }],
-    accepted: {
-        type : Boolean,
-        default : false
+    status: {
+        type: String,
+        enum: ['accepted', 'pending', 'declined'],
+        default: 'pending' // Set 'pending' as the default status
     }
-    /*
-    status: {} , // 'accepted' , 'pending','declined'
-    */
 }, { timestamps: true });
 
 
