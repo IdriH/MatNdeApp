@@ -33,6 +33,16 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 50
   },
+  deleteButton: {
+    backgroundColor: '#dc143c', // Crimson red background
+    padding: 10,
+    borderRadius: 5
+},
+deleteButtonText: {
+    color: 'white', // White text for better visibility on red background
+    fontSize: 16,
+    textAlign: 'center', // Center the text inside the button
+},
   header: {
     fontSize: 32,
     fontWeight: 'bold',

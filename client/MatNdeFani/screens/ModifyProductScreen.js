@@ -3,8 +3,10 @@ import React from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Button, ImageBackground,Alert } from 'react-native';
 import styles from '../styles/ModfiyProductScreenStyles';
 import { useState } from 'react';
-import { updateProduct } from '../services/api';
+import { updateProduct ,deleteProduct } from '../services/api';
 import { useProducts } from '../state/ProductsContext';
+import { TouchableOpacity } from 'react-native';
+
 
 const ModifyProductScreen = ({ route, navigation }) => {
   
@@ -19,6 +21,8 @@ const ModifyProductScreen = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(route.params.quantity.toString());
 
   const {updateProductsOptimistic} = useProducts();
+  const { removeProduct } = useProducts();
+
 
   const handleSaveChanges = async () => {
     const updatedProduct = {
@@ -32,7 +36,7 @@ const ModifyProductScreen = ({ route, navigation }) => {
       priceSold,
       quantity,
     };
-  
+   
     try {
       const result = await updateProduct(route.params.id, updatedProduct);
       if (result) {
@@ -47,6 +51,24 @@ const ModifyProductScreen = ({ route, navigation }) => {
       Alert.alert('Error', 'Failed to update product: ' + error.message);
     }
   };
+
+  const onDelete = async () => {
+    try {
+      const result = await deleteProduct(route.params.id);
+      console.log(result)
+      if (result.message === "Product deleted successfully") {
+        removeProduct(route.params.id);
+        Alert.alert('Success', 'Product deleted successfully', [
+          { text: 'OK', onPress: () => navigation.goBack() }
+        ]);
+      } else {
+        throw new Error("Deletion was not successful");
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to delete product: ' + error.message);
+    }
+  };
+
   
 
   return (
@@ -99,6 +121,11 @@ const ModifyProductScreen = ({ route, navigation }) => {
 
                     <View style={styles.buttonContainer}>
                         <Button title="Save Changes" onPress={ handleSaveChanges } />
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
+                            <Text style={styles.deleteButtonText}>Delete</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
           </View>

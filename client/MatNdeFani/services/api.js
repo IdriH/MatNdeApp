@@ -177,10 +177,78 @@ export const updateProduct = async (productID, productData) => {
       throw new Error('Failed to update product');
     }
     const data = await response.json();
-    return data.data; // Returns the response from the server
+    return data; // Returns the response from the server
   } catch (error) {
     console.error('Error updating product:', error);
     throw error;
+  }
+};
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/products/delete/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log(response)
+    if (!response.ok) {
+      throw new Error('Failed to delete product');
+    }
+    return await response.json(); // Returns the server's response which should indicate success
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Fetches all orders from the backend. This function is intended to be used by admins
+ * to retrieve all orders in the system.
+ */
+export const fetchAllOrders = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/orders`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch all orders');
+    }
+    const orders = await response.json();
+    return orders.data; // Assuming the API returns an object with a 'data' field containing all the orders
+  } catch (error) {
+    console.error('Error fetching all orders:', error);
+    throw error;
+  }
+};
+
+export const acceptOrder = async (orderId) => {
+  try {
+      const response = await fetch(`${API_BASE_URL}/orders/accept/${orderId}`, {
+          method: 'PUT'
+      });
+      if (!response.ok) {
+          throw new Error('Failed to accept order');
+      }
+      return await response.json();
+  } catch (error) {
+      console.error('Error accepting order:', error);
+      throw error;
+  }
+};
+
+export const declineOrder = async (orderId) => {
+  try {
+      const response = await fetch(`${API_BASE_URL}/orders/decline/${orderId}`, {
+          method: 'PUT'
+      });
+      if (!response.ok) {
+          throw new Error('Failed to decline order');
+      }
+      return await response.json();
+  } catch (error) {
+      console.error('Error declining order:', error);
+      throw error;
   }
 };
 

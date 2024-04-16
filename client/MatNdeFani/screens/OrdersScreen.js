@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView,Alert,useCallback } from 'react-native';
 import { useOrder } from '../state/OrderContext';
 import { useUser } from '../state/UserContext';
-import { fetchOrdersForProfessional } from '../services/api';
+import { fetchOrdersForProfessional,fetchAllOrders,acceptOrder,declineOrder } from '../services/api';
 import { useState,useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 //import styles from '../styles/OrdersScreenStyles';
 // Dummy data for orders
 
@@ -15,9 +16,14 @@ const OrdersScreen = () => {
   useEffect(() => {
     const loadOrders = async () => {
       try {
-       
-          const fetchedOrders = await fetchOrdersForProfessional(user.id);
-          setOrders(fetchedOrders);
+       if(user.role === 'admin'){
+        const fetchedOrders = await fetchAllOrders()
+        setOrders(fetchedOrders);
+       }else {
+         const fetchedOrders = await fetchOrdersForProfessional(user.id);
+         setOrders(fetchedOrders);
+        }
+
         
       } catch (error) {
         console.error('Error loading orders:', error);
@@ -28,11 +34,50 @@ const OrdersScreen = () => {
     loadOrders();
   }, []);
 
+ 
+
+
+  
+
   const renderProduct = ({ item }) => (
     <View style={styles.productItem}>
       <Text style={styles.productName}>{item.name} x {item.quantity} x {item.price}$</Text>
     </View>
   );
+
+  const handleAccept = async (orderId) => {
+    try {
+        const result = await acceptOrder(orderId);
+        console.log(JSON.stringify(result) + "TTTTTTTTTTTT")
+        // Optimistically update the order status in the local state
+        setOrders(currentOrders =>
+          currentOrders.map(order =>
+              order._id === orderId ? { ...order, status: 'accepted' } : order
+          )
+      );
+
+        // Update local state or trigger a refresh
+        Alert.alert('Success', 'Order accepted successfully');
+    } catch (error) {
+        Alert.alert('Error', error.message);
+    }
+};
+
+const handleDecline = async (orderId) => {
+    try {
+        const result = await declineOrder(orderId);
+        // Optimistically update the order status in the local state
+        setOrders(currentOrders =>
+          currentOrders.map(order =>
+              order._id === orderId ? { ...order, status: 'declined' } : order
+          )
+      );
+        // Update local state or trigger a refresh
+        Alert.alert('Success', 'Order declined successfully');
+    } catch (error) {
+        Alert.alert('Error', error.message);
+    }
+};  
 
   //const calculateTotal = (products) => products.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
 
@@ -49,18 +94,18 @@ const OrdersScreen = () => {
         {/*<Text style={styles.totalText}>Total: ${calculateTotal(item.products)}</Text>*/}
         <Text style={styles.statusText}>Status: {item.status}</Text> 
         <Text style={styles.timestampText}>Date: {formattedDate}</Text>
-        {(user.role === 'admin')?(
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.acceptButton} onPress={() => {/* Handle accept action here */}}>
-            <Text style={styles.buttonText}>Accept</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.removeButton} onPress={() => {/* Handle remove action here */}}>
-            <Text style={styles.buttonText}>Remove</Text>
-          </TouchableOpacity>
-        </View>):(null)
-        }
-      </View>
-    );
+          {(user.role === 'admin')?(
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.acceptButton} onPress={() => handleAccept(item._id)}>
+              <Text style={styles.buttonText}>Accept</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.declineButton}  onPress={() => handleDecline(item._id)}>
+              <Text style={styles.buttonText}>Decline</Text>
+            </TouchableOpacity>
+          </View>):(null)
+          }
+        </View>
+      );
   };
   
   return (
@@ -119,7 +164,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  removeButton: {
+  declineButton: {
     backgroundColor: 'red',
     padding: 10,
     borderRadius: 5,

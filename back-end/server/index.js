@@ -208,13 +208,10 @@ app.put('/products/modify/:id', async (req, res) => {
 });
 
 
-// Route to delete a product
-app.delete('/products/delete', async (req, res) => {
+app.delete('/products/delete/:id', async (req, res) => {
     try {
-        const productName = req.body.name;
-
-        await productsDao.deleteProduct(productName);
-        
+        const productId = req.params.id;
+        await productsDao.deleteProduct(productId);
         res.status(200).json({ message: 'Product deleted successfully' });
     } catch (error) {
         console.error('Error deleting product:', error);
@@ -283,6 +280,7 @@ app.get('/orders/:orderID', async (req, res) => {
     }
 });
 
+/*
 // Route to accept an order by ID
 app.put('/orders/accept/:orderID', async (req, res) => {
     try {
@@ -313,6 +311,30 @@ app.put('/orders/accept/:orderID', async (req, res) => {
     } catch (error) {
         console.error('Error accepting order:', error);
         res.status(500).json({ message: 'Error accepting order' });
+    }
+});
+*/
+// Route to accept an order
+app.put('/orders/accept/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const updatedOrder = await ordersDao.updateOrderStatus(orderId, 'accepted');
+        res.status(200).json({ data: updatedOrder, message: 'Order accepted successfully' });
+    } catch (error) {
+        console.error('Error accepting order:', error);
+        res.status(500).json({ message: 'Error accepting order' });
+    }
+});
+
+// Route to decline an order
+app.put('/orders/decline/:orderId', async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const updatedOrder = await ordersDao.updateOrderStatus(orderId, 'declined');
+        res.status(200).json({ data: updatedOrder, message: 'Order declined successfully' });
+    } catch (error) {
+        console.error('Error declining order:', error);
+        res.status(500).json({ message: 'Error declining order' });
     }
 });
 

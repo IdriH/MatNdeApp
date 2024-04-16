@@ -7,7 +7,7 @@ export const dummyUser = {
     username: "johndoe",
     password: "encryptedpassword", // In real application, passwords wouldn't be stored or passed like this.
     refreshToken: "someRefreshToken",
-    role: "admin" // Can be "Admin", "professional", or "User"
+    role: "professional" // Can be "Admin", "professional", or "User"
   };
   
 export const useUser = () => useContext(UserContext);

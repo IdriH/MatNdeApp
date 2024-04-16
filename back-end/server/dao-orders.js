@@ -94,13 +94,31 @@ export const getOrderById = async (orderID) => {
         throw error;
     }
 };
-
+/*
 // Function to accept an order by ID
 export const acceptOrder = async (orderID, accepted) => {
     try {
         await Orders.findByIdAndUpdate(orderID, { accepted: accepted });
     } catch (error) {
         console.error('Error accepting order:', error);
+        throw error;
+    }
+};
+*/
+// Function to update order status
+export const updateOrderStatus = async (orderId, status) => {
+    try {
+        const updatedOrder = await Orders.findByIdAndUpdate(
+            orderId,
+            { $set: { status: status } },
+            { new: true }
+        );
+        if (!updatedOrder) {
+            throw new Error('Order not found');
+        }
+        return updatedOrder;
+    } catch (error) {
+        console.error('Error updating order status:', error);
         throw error;
     }
 };

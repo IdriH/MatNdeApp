@@ -51,10 +51,9 @@ export const updateProductQuantity = async (productName, newQuantity) => {
     }
 };
 
-// Function to delete a product
-export const deleteProduct = async (productName) => {
+export const deleteProduct = async (productId) => {
     try {
-        const product = await Products.findOneAndDelete({ name: productName });
+        const product = await Products.findByIdAndDelete(productId);
 
         if (!product) {
             throw new Error('Product not found');
