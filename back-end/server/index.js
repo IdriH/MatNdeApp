@@ -7,6 +7,11 @@ import morgan from 'morgan'
 import fs from 'fs'
 import path from 'path'
 import connectDb from '../db/connection.js'
+import crypto from 'crypto'
+import session from 'express-session'
+import passport from 'passport';
+import LocalStrategy from 'passport-local'
+
 
 import * as productsDao from './dao-products.js';
 import * as professionalsDao from './dao-professionals.js';
@@ -14,6 +19,7 @@ import * as ordersDao from './dao-orders.js'
 //import * as bookingsDao from './dao-bookings.js'
 import * as reviewsDao from './dao-reviews.js'
 //import * as availabilitiesDao from './dao-availabilities.js'
+import * as usersDao from './dao-users.js'
 
 const app = express();
 
@@ -26,9 +32,107 @@ const accessLogStream = fs.createWriteStream(path.join('./', 'access.log'), { fl
 app.use(morgan('combined', { stream: accessLogStream }));
 
 
+/*** Passport ***/
+
+/** Authentication-related imports **/
+//const passport = require('passport');                              // authentication middleware
+//const LocalStrategy = require('passport-local');                   // authentication strategy (username and password)
+
+/** Set up authentication strategy to search in the DB a user with a matching password.
+ * The user object will contain other information extracted by the method userDao.getUser 
+ **/
+passport.use(new LocalStrategy(async function verify(username, password, callback) {
+  const user = await usersDao.getUser(username, password)
+  if(!user)
+    return callback(null, false, 'Incorrect username or password');  
+    
+  return callback(null, user); 
+}));
+
+// Serializing in the session the user object given from LocalStrategy(verify).
+passport.serializeUser(function (user, callback) { 
+  callback(null, user);
+});
+
+// Starting from the data in the session, we extract the current (logged-in) user.
+passport.deserializeUser(function (user, callback) { 
+  // if needed, we can do extra check here (e.g., double check that the user is still in the database, etc.)
+  // e.g.: return userDao.getUserById(id).then(user => callback(null, user)).catch(err => callback(err, null));
+
+  return callback(null, user); // this will be available in req.user
+});
+
+/** Creating the session */
+// Function to generate a random secret for session
+function generateSecret() {
+    return crypto.randomBytes(64).toString('hex'); // Generates a random key of 64 bytes long
+  }
+  
+  const sessionSecret = generateSecret(); // Store this securely and use as your session secret
+
+
+
+app.use(session({
+  secret: sessionSecret,  // Use the generated secret here
+  resave: false,
+  saveUninitialized: false,
+}));
+
+app.use(passport.authenticate('session'));
+
+
+/** Defining authentication verification middleware **/
+const isLoggedIn = (req, res, next) => {
+  if(req.isAuthenticated()) {
+    return next();
+  }
+  return res.status(401).json({error: 'Not authorized'});
+}
+
 app.get('/',(req,res) =>{
     res.send('Hello World!');
 })
+
+// POST /api/sessions 
+// This route is used for performing login.
+app.post('/api/sessions', function(req, res, next) {
+    passport.authenticate('local', (err, user, info) => { 
+      if (err)
+        return next(err);
+        if (!user) {
+          // display wrong login messages
+          return res.status(401).json({ error: info});
+        }
+        // success, perform the login and extablish a login session
+        req.login(user, (err) => {
+          if (err)
+            return next(err);
+          
+          // req.user contains the authenticated user, we send all the user info back
+          // this is coming from userDao.getUser() in LocalStratecy Verify Fn
+          return res.json(req.user);
+        });
+    })(req, res, next);
+  });
+  
+  // GET /api/sessions/current
+  // This route checks whether the user is logged in or not.
+  app.get('/api/sessions/current', (req, res) => {
+    if(req.isAuthenticated()) {
+      res.status(200).json(req.user);}
+    else
+      res.status(401).json({error: 'Not authenticated'});
+  });
+  
+  // DELETE /api/session/current
+  // This route is used for loggin out the current user.
+  app.delete('/api/sessions/current', (req, res) => {
+    req.logout(() => {
+      res.status(200).json({});
+    });
+  });
+  
+  
 
 
 app.get('/products', (req, res) => {
@@ -49,7 +153,7 @@ app.get('/professionals',(req,res) => {
     })
 })
 
-app.get('/orders', (req,res) => {
+app.get('/orders',isLoggedIn, (req,res) => {
     ordersDao.getOrders()
     .then(orders =>res.status(200).json({data : orders , message : "Retrieved List of Orders"}))
     .catch(err => {
@@ -99,7 +203,7 @@ app.post('/reviews/add',(req,res)=>{
     .then(review => res.status(200).json({data:review,messge : "Successfully added review!"}))
     .catch(err =>{
         console.error(err);
-        res.status(500).json({message:"Error:Could not retrieve review!"})
+        res.status(500).json({message:"Error:Could not save review!"})
     })
 })
 
@@ -120,6 +224,7 @@ app.delete('/reviews/delete/:reviewId', async (req, res) => {
 });
 
 app.get('/orders/professionals/:pID',async (req,res) => {
+    console.log(req.params.pID)
     const professionalID = req.params.pID;
     console.log("%%%%%%%%%%%%0" + professionalID)
     ordersDao.getOrdersForProfessional(professionalID)
@@ -220,6 +325,7 @@ app.delete('/products/delete/:id', async (req, res) => {
 });
 
 // Route to add a professional
+/*
 app.post('/professionals/add', async (req, res) => {
     try {
         const newProfessional = req.body;
@@ -232,6 +338,21 @@ app.post('/professionals/add', async (req, res) => {
         res.status(500).json({ message: 'Error adding professional' });
     }
 });
+*/
+// Route to add a professional
+app.post('/professionals/add', async (req, res) => {
+    try {
+        console.log(req.body)
+        const newProfessional = req.body;
+        const result = await professionalsDao.addProfessionalWithUser(newProfessional);
+        
+        res.status(200).json({ message: 'Professional added successfully', data: result });
+    } catch (error) {
+        console.error('Error adding professional:', error);
+        res.status(500).json({ message: 'Error adding professional' });
+    }
+});
+
 
 // Route to modify a professional
 app.put('/professionals/modify', async (req, res) => {

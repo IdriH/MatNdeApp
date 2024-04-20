@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 const products_model = new Schema({
-    //to be added id 
     name : {
         type: String,
         required : true,
@@ -38,9 +37,10 @@ const products_model = new Schema({
 });
 
 const professionals_model = new Schema({
-    professionalID : {
-        type : Number,
-        required :true
+    professionalID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     },
     category : { 
         type : String,
@@ -50,8 +50,8 @@ const professionals_model = new Schema({
         type: String,
         required: true
     },
-    dateOfBirth: {
-        type: Date,
+    yearOfBirth: {
+        type: Number,
         required: true
     },
     ShortDescription: {
@@ -60,13 +60,16 @@ const professionals_model = new Schema({
         maxlength: 2000
     },
     available : {type: Boolean,default:true},
-    reviewScore: Number,
+    reviewScore: {
+        type: Number,
+        set: v => Math.round(v * 10) / 10 // Round to 1 decimal place
+    },
     phoneNumber:{type: String,required:true,maxlength:20}
 });
 
 const reviews_model = new Schema({
     professionalID: { 
-        type: Number, 
+        type: String, 
         required: true 
     },
     score: {
@@ -121,12 +124,19 @@ const user_model = new Schema({
         maxlength: 255,
         unique: true
     },
-    password: {
+    role: {
         type: String,
-        required: true
+        required: true,
+        enum: ['admin', 'professional', 'user']  // Only these roles are valid
     },
-    refreshToken: String,
-    role: { type: String, required: true }
+    hash: {
+        type: String,
+        required: true  // Assuming hash must be stored for password handling
+    },
+    salt: {
+        type: String,
+        required: true  // Assuming salt must be stored for password handling
+    }
 });
 
 //schema to add orderID,status
@@ -137,7 +147,7 @@ const order_model = new Schema({
     },
     */
     professionalID: {
-        type: Number,
+        type: String,
         required: true
     },
     products: [{

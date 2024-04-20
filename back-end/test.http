@@ -3,6 +3,26 @@
 ###
 GET http://localhost:3000/
 
+## Execute Log In
+###
+POST http://localhost:3000/api/sessions HTTP/1.1
+content-type: application/json
+
+{
+    "username": "professionalUser",
+    "password": "pro123"
+}
+###
+
+## Checking if user is still logged-in.
+GET http://localhost:3000/api/sessions/current HTTP/1.1
+###
+
+## Execute Log Out.
+DELETE http://localhost:3000/api/sessions/current HTTP/1.1
+###
+
+
 
 ###client point of view
 
@@ -24,7 +44,7 @@ POST http://localhost:3000/reviews/add HTTP/1.1
 Content-Type: application/json
 
 {
-    "professionalID": 3,
+    "professionalID": "662256902c0a32be6f4fa0fb",
     "reviewerName": "Filan Fisteku",
     "score": 4,
     "comment": "Well  job with my sink"
@@ -92,7 +112,7 @@ PUT http://localhost:3000/products/modify/65ef3ceb2f3d06c84f48ddde
 Content-Type: application/json
 
 {
-    "name": "Product 11",
+    "name": "Product 111",
     "category": "Hardware",
     "distributor": "Distributor A",
     "manufacturer": "Manufacturer A",
@@ -113,16 +133,16 @@ Content-Type: application/json
 ### handle professionals 
 
 ### add professional 
-POST http://localhost:3000/professionals/add HTTP/1.1
+POST http://localhost:3000/professionals/add 
 Content-Type: application/json
 
 {
-    "professionalID": 6,
-    "fullName": "John Doe",
-    "age": 30,
-    "ShortDescription": "Experienced plumber.",
-    "reviewScore": 4.5,
-    "phoneNumber": "1234567890"
+    "fullName": "f",
+    "category" : "electrician",
+    "yearOfBirth": "1980",
+    "ShortDescription": "Experienced building professional",
+    "phoneNumber": "1234567890",
+    "password": "password123"
 }
 
 ### modify professional 
@@ -139,7 +159,7 @@ Content-Type: application/json
 }
 
 ### delete professional
-DELETE http://localhost:3000/professionals/delete/6
+DELETE http://localhost:3000/professionals/delete/66225aa45ef5efba7d105f4f
 
 ### remove review of a professional
 DELETE http://localhost:3000/reviews/delete/65f71054d9e86bc61a7095e4

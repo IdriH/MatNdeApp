@@ -1,24 +1,41 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {login} from '../services/api.js';
 
-const LoginScreen = () => {
+import { useUser } from '../state/UserContext';
+
+
+
+const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    console.log('Logging in with:', username, password);
-    // Implement your login logic here
-  };
+  const { setUser } = useUser();
 
+  const handleLogin = async () => {
+    try {
+      const trimmedUsername = username.trim(); // Trim the username to remove trailing , leading whitespace
+      const data = await login(trimmedUsername, password);
+      setUser(data); // Set user data in context
+      console.log('Login successful:', data);
+      Alert.alert('Success', 'Logged in successfully!', [
+        { text: "OK", onPress: () => navigation.goBack() } // Navigate to HomeScreen
+      ]);
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', error.message || 'Login failed');
+    }
+  };
+  
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         onChangeText={setUsername}
         value={username}
         placeholder="Username"
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}

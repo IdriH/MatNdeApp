@@ -1,23 +1,18 @@
-import React, { createContext, useContext, useState } from 'react';
-
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { checkCurrentSession } from '../services/api';  // Adjust the import path as necessary
 
 const UserContext = createContext();
-export const dummyUser = {
-    id : 1,
-    username: "johndoe",
-    password: "encryptedpassword", // In real application, passwords wouldn't be stored or passed like this.
-    refreshToken: "someRefreshToken",
-    role: "professional" // Can be "Admin", "professional", or "User"
-  };
-  
+
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
-  // Assume you set the initial user state with dummy data
-  const [user, setUser] = useState(dummyUser);
+  const [user, setUser] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, isLoggedIn, setIsLoggedIn }}>
       {children}
     </UserContext.Provider>
   );

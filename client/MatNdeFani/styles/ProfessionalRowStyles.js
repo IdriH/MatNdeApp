@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     },
     reviewScoreContainer: {
       // This is adjusted to align the review score to the right
+      marginHorizontal : 10,
       alignItems: 'flex-end',
     },
     reviewScore: {

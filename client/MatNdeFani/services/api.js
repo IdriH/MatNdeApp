@@ -1,6 +1,6 @@
 // services/api.js
 
-const API_BASE_URL = 'http://10.3.19.58:3000'; // This should be the base URL of your back-end server
+const API_BASE_URL = 'http://192.168.10.178:3000'; // This should be the base URL of your back-end server
 
 export const fetchProducts = async () => {
   try {
@@ -251,6 +251,63 @@ export const declineOrder = async (orderId) => {
       throw error;
   }
 };
+
+
+/////////////////////
+export const login = async (username, password) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/sessions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Unable to login');
+    }
+    return await response.json();  // Assuming the server sends back the user data
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
+};
+
+
+export const checkCurrentSession = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/sessions/current`, {
+      method: 'GET',
+      credentials: 'include',  // Needed to include cookies
+    });
+    if (!response.ok) {
+      throw new Error('Not authenticated');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Check session error:', error);
+    throw error;
+  }
+};
+
+export const logout = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/sessions/current`, {
+      method: 'DELETE',
+      credentials: 'include',  // Needed to include cookies
+    });
+    if (!response.ok) {
+      throw new Error('Failed to logout');
+    }
+    return await response.json();  // Just confirming the logout was successful
+  } catch (error) {
+    console.error('Logout error:', error);
+    throw error;
+  }
+};
+
+
 
 
 

@@ -48,12 +48,14 @@ const OrdersScreen = () => {
   const handleAccept = async (orderId) => {
     try {
         const result = await acceptOrder(orderId);
+        
         console.log(JSON.stringify(result) + "TTTTTTTTTTTT")
         // Optimistically update the order status in the local state
         setOrders(currentOrders =>
           currentOrders.map(order =>
               order._id === orderId ? { ...order, status: 'accepted' } : order
           )
+        
       );
 
         // Update local state or trigger a refresh
