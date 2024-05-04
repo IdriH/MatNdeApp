@@ -12,6 +12,7 @@ import session from 'express-session'
 import passport from 'passport';
 import LocalStrategy from 'passport-local'
 
+import multer from 'multer'
 
 import * as productsDao from './dao-products.js';
 import * as professionalsDao from './dao-professionals.js';
@@ -24,12 +25,25 @@ import * as usersDao from './dao-users.js'
 const app = express();
 
 app.use(express.json())
+app.use('/uploads',express.static('uploads'))
 connectDb();
 
 const accessLogStream = fs.createWriteStream(path.join('./', 'access.log'), { flags: 'a' });
 
 // Save log entries to a file
 app.use(morgan('combined', { stream: accessLogStream }));
+
+// Set up multer storage for storing profile pictures
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/') // Set the destination folder for storing uploaded files
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname) // Use the original filename for storing the file
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
 
 /*** Passport ***/
@@ -203,7 +217,7 @@ app.post('/reviews/add',(req,res)=>{
     .then(review => res.status(200).json({data:review,messge : "Successfully added review!"}))
     .catch(err =>{
         console.error(err);
-        res.status(500).json({message:"Error:Could not save review!"})
+        res.status(500).json({message:"Error:Could not save review!", error : err.message})
     })
 })
 
@@ -246,11 +260,12 @@ app.get('/orders/professionals/:pID/:oID', async(req,res)=>{
 })
 
 app.post('/orders/add',async(req,res) => {
+    console.log(JSON.stringify(req.body) + '==============')
     ordersDao.addOrder(req.body)
     .then(order => res.status(200).json({data: order, message:"Order added successfully"}))
     .catch(err =>{
         console.error("Error:",err)
-        res.status(500).json({message:"Error:Could not make order!"})
+        res.status(500).json({message:"Error:Could not make order!",error : err.message})
     })
 })
 
@@ -289,9 +304,11 @@ app.post('/products/add', async (req, res) => {
         .then(product => res.status(200).json({ data: product, message: "Product added successfully" }))
         .catch(err => {
             console.error("Error:", err);
-            res.status(500).json({ message: "Error: Could not add product" });
+            // Ensuring that the detailed error message is sent to the client
+            res.status(400).json({ message: "Error: Could not add product", error: err.message });
         });
 });
+
 
 // Route to modify product by ID
 app.put('/products/modify/:id', async (req, res) => {
@@ -340,18 +357,28 @@ app.post('/professionals/add', async (req, res) => {
 });
 */
 // Route to add a professional
-app.post('/professionals/add', async (req, res) => {
+app.post('/professionals/add', upload.single('profilePicture'), async (req, res) => {
     try {
-        console.log(req.body)
-        const newProfessional = req.body;
-        const result = await professionalsDao.addProfessionalWithUser(newProfessional);
         
+        
+        
+        console.log(req.file)
+        console.log(req.body);
+        const newProfessional = req.body;
+        if (req.file) {
+            newProfessional.profilePicture = req.file.path;  // Using `path` instead of `filename` if you want the full path
+        }
+        
+
+        const result = await professionalsDao.addProfessionalWithUser(newProfessional);
+
         res.status(200).json({ message: 'Professional added successfully', data: result });
     } catch (error) {
         console.error('Error adding professional:', error);
-        res.status(500).json({ message: 'Error adding professional' });
+        res.status(500).json({ message: 'Error adding professional', error: error.message });
     }
 });
+
 
 
 // Route to modify a professional
@@ -359,6 +386,8 @@ app.put('/professionals/modify', async (req, res) => {
     try {
         const professionalID = req.body.professionalID;
         const updatedFields = req.body;
+        console.log(professionalID + "@@@@@@@@@@@@");
+        console.log(updatedFields+ "@@@@@@@@@@@@@@");
 
         await professionalsDao.modifyProfessional(professionalID, updatedFields);
         
@@ -443,10 +472,12 @@ app.put('/orders/accept/:orderId', async (req, res) => {
         res.status(200).json({ data: updatedOrder, message: 'Order accepted successfully' });
     } catch (error) {
         console.error('Error accepting order:', error);
-        res.status(500).json({ message: 'Error accepting order' });
+        // Make sure to send the error message text, not the error object
+        console.log(error + "EEEEEEEEEEERRR")
+        console.log(error.message + "MMMMMMMMMMMMMMMM")
+        res.status(409).json({ message: 'Error accepting order', error: error.message });
     }
 });
-
 // Route to decline an order
 app.put('/orders/decline/:orderId', async (req, res) => {
     try {

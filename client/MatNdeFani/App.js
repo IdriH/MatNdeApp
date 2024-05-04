@@ -17,6 +17,7 @@ import AddProductScreen from './screens/AddProductScreen'
 import { UserProvider } from './state/UserContext';
 import { OrderProvider } from './state/OrderContext';
 import { ProductProvider } from './state/ProductsContext';
+import AddProfessionalScreen from './screens/AddProfessionalScreen';
 // Create the stack navigator
 const Stack = createNativeStackNavigator();
 
@@ -34,10 +35,11 @@ const App = () => {
               <Stack.Screen name = "AddProduct" component = {AddProductScreen}/>
               <Stack.Screen name="Professionals" component={ProfessionalsScreen} />
               <Stack.Screen name="ViewProfessional" component={ViewProfessionalScreen} />
+              <Stack.Screen name = "AddProfessional" component={AddProfessionalScreen}/>
               <Stack.Screen name = "AddReview" component={ AddReviewScreen}></Stack.Screen>
               <Stack.Screen name="Orders" component={OrdersScreen} />
               <Stack.Screen name="Order" component={OrderScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" component={LoginScreen} /*options={{ headerShown: false }}*/ />
             </Stack.Navigator>
           </NavigationContainer>
         </OrderProvider>

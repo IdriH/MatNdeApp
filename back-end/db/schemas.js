@@ -50,10 +50,6 @@ const professionals_model = new Schema({
         type: String,
         required: true
     },
-    yearOfBirth: {
-        type: Number,
-        required: true
-    },
     ShortDescription: {
         type: String,
         required: true,
@@ -64,7 +60,8 @@ const professionals_model = new Schema({
         type: Number,
         set: v => Math.round(v * 10) / 10 // Round to 1 decimal place
     },
-    phoneNumber:{type: String,required:true,maxlength:20}
+    phoneNumber:{type: String,required:true,maxlength:20},
+    profilePicture: { type: String },
 });
 
 const reviews_model = new Schema({
@@ -150,15 +147,16 @@ const order_model = new Schema({
         type: String,
         required: true
     },
+    // keeping both name and id even though they are both considered unique to not break the already working functions
+    // with pID 
+    professionalName: {
+        type : String , 
+        //required : true,
+    },
     products: [{
-        name: {
-            type: String,
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true
-        }
+        name: { type: String, required: true },
+        quantity: { type: Number, required: true },
+        price: { type: Number, required: true }
     }],
     status: {
         type: String,

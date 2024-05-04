@@ -107,6 +107,8 @@ export const addProfessionalWithUser = async function(professionalData) {
 // Function to add a professional without using transactions
 export const addProfessionalWithUser = async function(professionalData) {
     try {
+
+        console.log(professionalData.profilePicture)
         const salt = await bcrypt.genSalt(10); // Generate salt
         const hash = await bcrypt.hash(professionalData.password, salt); // Hash the password with the salt
 
@@ -122,11 +124,12 @@ export const addProfessionalWithUser = async function(professionalData) {
             professionalID: savedUser._id,
             category : professionalData.category,
             fullName: professionalData.fullName,
-            yearOfBirth: professionalData.yearOfBirth,
-            ShortDescription: professionalData.ShortDescription,
+            ShortDescription: professionalData.shortDescription,
             reviewScore: 0,
             phoneNumber: professionalData.phoneNumber,
+            profilePicture: professionalData.profilePicture,
         });
+        console.log(newProfessional.image + "DPDPDPDPDPDPDDPDPDPCDP")
         await newProfessional.save();
 
         console.log('Professional and user added successfully');

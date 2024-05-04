@@ -19,30 +19,29 @@ const HomeScreen = ({ navigation}) => {
     React.useCallback(() => {
       const verifySession = async () => {
         try {
-          const userData = await checkCurrentSession();
-          if (userData) {
-            if (!isLoggedIn || (user.username !== userData.username)) {
-              setUser(userData);
-              setIsLoggedIn(true);
-            }
-          } else {
-            if (isLoggedIn) {
+          // Verify session only if user is logged in
+          if (isLoggedIn) {
+            const userData = await checkCurrentSession();
+            if (userData) {
+              if (user.username !== userData.username) {
+                setUser(userData);
+              }
+            } else {
               setIsLoggedIn(false);
               setUser({});
             }
           }
         } catch (error) {
           console.error('Failed to verify session:', error);
-          if (isLoggedIn) {
-            setIsLoggedIn(false);
-            setUser({});
-          }
+          setIsLoggedIn(false);
+          setUser({});
         }
       };
-
+  
       verifySession();
-    }, [])
+    }, [isLoggedIn])
   );
+  
 
   if (isLoggedIn) {
   console.log('Logged in as:', user.username);

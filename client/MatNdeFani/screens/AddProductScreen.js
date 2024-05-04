@@ -18,31 +18,31 @@ const AddProductScreen = ({navigation}) => {
 
   const handleSaveChanges = async () => {
     const newProduct = {
-      name,
-      category,
-      distributor,
-      manufacturer,
-      origin,
-      priceBought,
-      priceSold,
-      quantity,
+        name,
+        category,
+        distributor,
+        manufacturer,
+        origin,
+        priceBought,
+        priceSold,
+        quantity,
     };
 
     try {
         const result = await addProduct(newProduct);
         Alert.alert('Success', 'Product added successfully', [
-          {
-            text: 'OK',
-            onPress: () => navigation.goBack(),  // Navigating back on success
-          }
-         
+            {
+                text: 'OK',
+                onPress: () => navigation.goBack(),  // Navigating back on success
+            }
         ]);
         addProductOptimistic(result.data);
     } catch (error) {
-      Alert.alert('Error', 'Failed to add product: ' + error.message);
-      console.error('TEST2', error);
+        // Display the actual error message received from the backend
+        Alert.alert('Error', error.message);
+        console.error('TEST2', error.message);
     }
-  };
+};
 
   return (
     <View style={styles.container}>

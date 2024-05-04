@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet,TouchableWithoutFeedback } from 'react-native';
 import { useState,useEffect } from 'react';
 import { submitReview } from '../services/api';
-
+import { Alert } from 'react-native';  // Import Alert from react-native
 const AddReviewScreen = ({navigation,route}) => {
     const [name, setName] = useState('');
     const [review, setReview] = useState('');
@@ -14,22 +14,34 @@ const AddReviewScreen = ({navigation,route}) => {
 
 
 
-    const handleConfirm = async () => {
-       
-        const reviewData = {
-            professionalID, // Make sure this matches the type expected by the schema (Number).
-            reviewerName: name, // Changed from 'name' to 'reviewerName'.
-            score: rating, // Changed from 'rating' to 'score'.
-            comment: review, // Changed from 'text' to 'comment'.
-        };
     
+
+    const handleConfirm = async () => {
+        const reviewData = {
+            professionalID,
+            reviewerName: name,
+            score: rating,
+            comment: review,
+        };
+
         try {
             await submitReview(reviewData);
-            console.log('Review added successfully');
-            navigation.goBack(); // Navigate back after adding the review
+            Alert.alert(
+                'Review Submitted',  // Title of the alert
+                'Your review has been added successfully',  // Message of the alert
+                [
+                    { text: 'OK', onPress: () => navigation.goBack() }  // Button to dismiss the alert and go back
+                ]
+            );
         } catch (error) {
             console.error('Failed to add review:', error);
-            // Optionally, handle the error in UI (e.g., show a message to the user)
+            Alert.alert(
+                'Error',  // Title of the alert
+                'Failed to add review: ' + (error.message || 'Unknown error'),  // Error message extracted from the exception
+                [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') }  // Button to dismiss the alert
+                ]
+            );
         }
     };
 

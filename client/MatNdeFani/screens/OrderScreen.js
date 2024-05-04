@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { submitOrder } from '../services/api';
 
+import { Alert } from 'react-native';  // Ensure to import Alert
+
 const OrderScreen = ({ route, navigation }) => {
   const [order, setOrder] = useState(route.params.order);
 
@@ -23,26 +25,42 @@ const OrderScreen = ({ route, navigation }) => {
     setOrder(newOrder);
   };
 
-  const handleConfirm = async () => {
-    // Assuming `order` state contains the current order details including products
+
+const handleConfirm = async () => {
     const orderData = {
         professionalID: order.professionalID,
         products: order.products.map(product => ({
             name: product.name,
+            price: product.priceSold,
             quantity: product.quantity,
         })),
-        status: 'pending', // Or set based on current order state if it can be different
+        status: 'pending', // Adjust based on your application's logic
     };
 
     try {
         const result = await submitOrder(orderData);
-        console.log('Order submitted successfully', result);
-        navigation.navigate('Home');
+        Alert.alert(
+            'Success',  // Title of the alert
+            'Order submitted successfully',  // Message of the alert
+            [
+                { 
+                    text: 'OK', 
+                    onPress: () => navigation.navigate('Home')  // Navigate back home or to the appropriate screen
+                }
+            ]
+        );
     } catch (error) {
         console.error('Failed to submit order:', error);
-        // Optionally, handle the error in UI (e.g., show an error message)
+        Alert.alert(
+            'Error',  // Title of the alert
+            'Failed to submit order: ' + (error.message || 'Unknown error'),  // Error message
+            [
+                { text: 'OK', onPress: () => console.log('OK Pressed') }  // Button to dismiss the alert
+            ]
+        );
     }
 };
+
 
 const handleCancel = () => {
   if (route.params.resetOrder) {
@@ -51,10 +69,15 @@ const handleCancel = () => {
   navigation.goBack();
 };
 
+// Function to calculate the total price of the order
+const calculateTotal = () => {
+  return order.products.reduce((acc, product) => acc + product.quantity * product.priceSold, 0);
+};
+
 
   const renderOrderItem = ({ item, index }) => (
     <View style={styles.orderItem}>
-      <Text style={styles.orderTitle}>{item.name} x {item.quantity}</Text>
+      <Text style={styles.orderTitle}>{item.name} x {item.quantity} x {item.priceSold} lek</Text>
       <View style={styles.quantityControls}>
         <TouchableOpacity style={styles.quantityButton} onPress={() => incrementQuantity(index)}>
           <Text style={styles.quantityText}>+</Text>
@@ -78,7 +101,7 @@ const handleCancel = () => {
           renderItem={renderOrderItem}
           keyExtractor={(item, index) => `product-${index}`}
         />
-        
+         <Text style={styles.totalText}>Total: {calculateTotal()} lek</Text>
         {/* Confirm Button */}
         <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
           <Text style={styles.buttonText}>Confirm</Text>
@@ -154,6 +177,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  totalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 20,
   },
 });
 

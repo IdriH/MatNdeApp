@@ -1,4 +1,5 @@
-import { Orders } from "../db/schemas.js";
+import { Orders,Professionals,Products } from "../db/schemas.js";
+import mongoose from "mongoose";
 
 export const getOrders = async () =>{
     try{
@@ -35,12 +36,31 @@ export const getOrderForProfessional = async(pId,OId) => {
 }
 
 export const addOrder = async(order) => {
-    try{
-        const newOrder = Orders(order);
-        newOrder.save();
+    try {
+        // Find the professional by ID to get the fullName
+        const professional = await Professionals.findOne({ professionalID: order.professionalID });
+        console.log(professional);
+        if (!professional) {
+            throw new Error('Professional not found');
+        }
+
+        // Attach professional's fullName to the order
+        const orderWithProfessionalName = {
+            ...order,
+            professionalName: professional.fullName
+        };
+
+        console.log(orderWithProfessionalName)
+
+        // Create a new order with the fullName and other details
+        const newOrder = new Orders(orderWithProfessionalName);
+
+        // Validate and save the new order
+        await newOrder.save();
+
         return newOrder;
-    }catch(err){
-        console.error("Could not make order");
+    } catch (err) {
+        console.error("Could not make order", err);
         throw err;
     }
 }
@@ -102,6 +122,8 @@ export const acceptOrder = async (orderID, accepted) => {
     }
 };
 */
+
+/*
 // Function to update order status
 export const updateOrderStatus = async (orderId, status) => {
     try {
@@ -117,5 +139,41 @@ export const updateOrderStatus = async (orderId, status) => {
     } catch (error) {
         console.error('Error updating order status:', error);
         throw error;
+    }
+};
+*/
+export const updateOrderStatus = async (orderId, status) => {
+    try {
+        const order = await Orders.findById(orderId);
+        if (!order) {
+            throw new Error('Order not found');
+        }
+
+        if (status === 'accepted') {
+            // Check inventory for each product before updating order status
+            for (const product of order.products) {
+                const existingProduct = await Products.findOne({ name: product.name });
+                if (!existingProduct) {
+                    throw new Error(`Product not found: ${product.name}`);
+                }
+                if (existingProduct.quantity < product.quantity) {
+                    throw new Error(`Not enough quantity for product: ${product.name}`);
+                }
+            }
+
+            // If inventory is sufficient, update the quantity for each product
+            for (const product of order.products) {
+                const existingProduct = await Products.findOne({ name: product.name });
+                const newQuantity = existingProduct.quantity - product.quantity;
+                await Products.updateOne({ name: product.name }, { $set: { quantity: newQuantity } });
+            }
+        }
+
+        // Update order status only if all checks pass
+        const updatedOrder = await Orders.findByIdAndUpdate(orderId, { $set: { status: status } }, { new: true });
+        return updatedOrder;
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw error; // Rethrow the error to be caught and handled by the route
     }
 };

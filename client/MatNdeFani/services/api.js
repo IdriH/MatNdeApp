@@ -1,6 +1,7 @@
 // services/api.js
 
-const API_BASE_URL = 'http://192.168.10.178:3000'; // This should be the base URL of your back-end server
+const API_BASE_URL = 'http://192.168.30.30:3000'; // This should be the base URL of your back-end server
+export default API_BASE_URL;
 
 export const fetchProducts = async () => {
   try {
@@ -74,11 +75,12 @@ export const fetchProfessionals = async () => {
               comment: reviewData.comment, // Changed to use comment instead of text
           })
           });
+          const result = await response.json();
         if (!response.ok) {
-            throw new Error('Failed to submit review');
+            throw new Error(result.error || 'Failed to submit review');
         }
 
-        const result = await response.json();
+        
         console.log('Review submitted successfully', result);
         return result;
     } catch (error) {
@@ -89,6 +91,7 @@ export const fetchProfessionals = async () => {
 
 export const submitOrder = async (orderData) => {
   try {
+      console.log(JSON.stringify(orderData) + "LLLLLLLLLLLLLLLLL")
       const response = await fetch(`${API_BASE_URL}/orders/add`, {
           method: 'POST',
           headers: {
@@ -97,7 +100,7 @@ export const submitOrder = async (orderData) => {
           body: JSON.stringify(orderData) // Directly pass the correctly structured `orderData`
       });
       if (!response.ok) {
-          throw new Error('Failed to submit order');
+          throw new Error(response.error || 'Failed to submit order'  );
       }
 
       const result = await response.json();
@@ -141,24 +144,23 @@ export const toggleProfessionalStatus = async (professionalID) => {
   }
 };
 
-// api.js
 export const addProduct = async (productData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/products/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(productData),
-    });
-    if (!response.ok) {
-      throw new Error('Failed to add product');
-    }
-    const data = await response.json();
-    return data; // Returns the response from the server
+      const response = await fetch(`${API_BASE_URL}/products/add`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+      });
+      const data = await response.json();  // Parse JSON response in all cases to get error details
+      if (!response.ok) {
+          throw new Error(data.error || 'Failed to add product');
+      }
+      return data;
   } catch (error) {
-    console.error('Error adding product:', error);
-    throw error;
+      console.error('Error adding product:', error);
+      throw error;  // Ensure the error object is thrown with message intact
   }
 };
 
@@ -173,10 +175,12 @@ export const updateProduct = async (productID, productData) => {
       },
       body: JSON.stringify(productData),
     });
-    if (!response.ok) {
-      throw new Error('Failed to update product');
-    }
+    
     const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to update product');
+    }
+    
     return data; // Returns the response from the server
   } catch (error) {
     console.error('Error updating product:', error);
@@ -221,14 +225,14 @@ export const fetchAllOrders = async () => {
     throw error;
   }
 };
-
+/*
 export const acceptOrder = async (orderId) => {
   try {
       const response = await fetch(`${API_BASE_URL}/orders/accept/${orderId}`, {
           method: 'PUT'
       });
       if (!response.ok) {
-          throw new Error('Failed to accept order');
+          throw new Error('Failed to accept order:' + response.error);
       }
       return await response.json();
   } catch (error) {
@@ -236,6 +240,28 @@ export const acceptOrder = async (orderId) => {
       throw error;
   }
 };
+*/
+export const acceptOrder = async (orderId) => {
+  try {
+      const response = await fetch(`${API_BASE_URL}/orders/accept/${orderId}`, {
+          method: 'PUT'
+      });
+      const data = await response.json();
+      if (!response.ok) {
+          // Throw an error with the backend message if available
+         console.error(data.error + "DEDEDEDEDEDEDEDE")
+          throw new Error(data.error);
+      }
+      return data;
+  } catch (error) {
+      console.error(error + "EEEEEEEEEEEEEEEEEE")
+      console.error('Error accepting order:', error);
+      // Rethrow the error to be caught in the handling function
+      throw error;
+  }
+};
+
+
 
 export const declineOrder = async (orderId) => {
   try {
@@ -307,6 +333,131 @@ export const logout = async () => {
   }
 };
 
+export const addProfessional = async (formData) => {
+  try {
+
+    const response = await fetch(`${API_BASE_URL}/professionals/add`, {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to add professional');
+    }
+    return data;
+  } catch (error) {
+    console.error('Error adding professional:', error);
+    throw error;
+  }
+};
+
+
+export const modifyProfessional = async (professionalID, updatedFields) => {
+  try {
+    console.log("Api caled")
+    const response = await fetch(`${API_BASE_URL}/professionals/modify`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        professionalID: professionalID,
+        ...updatedFields
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to modify professional');
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API call error:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Deletes a professional by their ID.
+ * @param {string} professionalID - The ID of the professional to be deleted.
+ * @returns {Promise} - A Promise that resolves to the server's response.
+ */
+export const deleteProfessional = async (professionalID) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/professionals/delete/${professionalID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // If authentication is needed, ensure to include credentials or a token header
+      // credentials: 'include' or headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      // If the server responds with an error status, throw an error with the response
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete professional');
+    }
+
+    // If the response is successful, return the JSON data
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting professional:', error.message);
+    throw error; // Rethrow the error to handle it where the function is called
+  }
+};
+
+export const deleteOrder = async (orderId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/orders/delete/${orderId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // If authentication is needed, ensure to include credentials or a token header
+      // credentials: 'include' or headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      // If the server responds with an error status, throw an error with the response
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete order');
+    }
+
+    // If the response is successful, return the JSON data
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting order:', error.message);
+    throw error; // Rethrow the error to handle it where the function is called
+  }
+};
+
+export const deleteReview = async (reviewId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/reviews/delete/${reviewId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // If authentication is needed, ensure to include credentials or a token header
+      // credentials: 'include' or headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+      // If the server responds with an error status, throw an error with the response
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete review');
+    }
+
+    // If the response is successful, return the JSON data
+    return await response.json();
+  } catch (error) {
+    console.error('Error deleting review:', error.message);
+    throw error; // Rethrow the error to handle it where the function is called
+  }
+};
 
 
 

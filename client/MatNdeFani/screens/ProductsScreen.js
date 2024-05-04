@@ -7,11 +7,11 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../state/UserContext';
 import { useOrder } from '../state/OrderContext';
 import { useProducts } from '../state/ProductsContext';
-import { fetchProducts } from '../services/api';
+
 
 const ProductsScreen = ({ navigation }) => {
   const { user } = useUser();
-  const { products } = useProducts(); // Assuming useProducts returns an object with a products array
+  const { products ,setProducts,updateProducts} = useProducts(); // Assuming useProducts returns an object with a products array
   
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
@@ -23,19 +23,39 @@ const ProductsScreen = ({ navigation }) => {
     createdAt: new Date().toISOString(), // You might let the backend handle `createdAt` timestamps
 });
 
+  
   // Refetch products when the screen is focused
   useFocusEffect(
     useCallback(() => {
       const fetchAndUpdateProducts = async () => {
-        await fetchProducts();
+        await updateProducts();
       };
 
       fetchAndUpdateProducts();
+      console.log("testttttttttttttttttttttttt")
     }, [])
   );
-
   
- 
+  /*
+  useFocusEffect(
+    useCallback(() => {
+      const fetchProductsDirectly = async () => {
+        try {
+          const productsFromApi = await fetchProducts(); // Assuming fetchProducts directly fetches products from the API
+          console.log('Directly fetched products');
+          setProducts(productsFromApi); // Update the products in the local state of the ProductsScreen
+        } catch (error) {
+          console.error('Failed to fetch products:', error);
+          // Handle the error as needed
+        }
+      };
+  
+      fetchProductsDirectly();
+      console.log("testttttttttttttttttttttttt")
+    }, [])
+  );
+  */
+  
   
   const popAnimation = useRef(new Animated.Value(1)).current;
 
@@ -58,6 +78,7 @@ const ProductsScreen = ({ navigation }) => {
           if (index === productIndex) {
             return { ...p, quantity: p.quantity + 1 }; // Increment quantity
           }
+          console.log(p);
           return p;
         });
       } else {

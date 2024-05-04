@@ -27,7 +27,18 @@ export const ProductProvider = ({ children }) => {
   //thats why we will use addProduct To do optimistic update for the admin case
   //addPRoduct optimistic update
   
-
+  
+  const updateProducts = async () => {
+    
+    try {
+      const productsFromApi = await fetchProducts();
+      setProducts(productsFromApi);
+    } catch (error) {
+      console.error('Failed to update products:', error);
+      // Handle the error as needed
+    }
+  };
+  
 
   const addProductOptimistic = (product) => {
     setProducts([...products, product]);
@@ -46,7 +57,7 @@ export const ProductProvider = ({ children }) => {
 
   // In your ProductProvider
 return (
-  <ProductContext.Provider value={{ products, setProducts, addProductOptimistic, updateProductsOptimistic, removeProduct }}>
+  <ProductContext.Provider value={{ products, setProducts, addProductOptimistic, updateProductsOptimistic, removeProduct,updateProducts }}>
     {children}
   </ProductContext.Provider>
 );

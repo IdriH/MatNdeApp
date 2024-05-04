@@ -1,32 +1,40 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+
 import {login} from '../services/api.js';
 
 import { useUser } from '../state/UserContext';
 
-
-
 const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { setUser ,setIsLoggedIn } = useUser();
+  const [showPassword, setShowPassword] = useState(false);
 
-  const { setUser } = useUser();
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleLogin = async () => {
     try {
-      const trimmedUsername = username.trim(); // Trim the username to remove trailing , leading whitespace
-      const data = await login(trimmedUsername, password);
-      setUser(data); // Set user data in context
+      const trimmedUsername = username.trim();
+      const trimmedPassword = password.trim();
+      const lowerCaseTrimmedPassword = trimmedPassword.toLowerCase();
+      console.log(lowerCaseTrimmedPassword);
+      const data = await login(trimmedUsername, lowerCaseTrimmedPassword);
+      setUser(data);
+      setIsLoggedIn(true);
       console.log('Login successful:', data);
       Alert.alert('Success', 'Logged in successfully!', [
-        { text: "OK", onPress: () => navigation.goBack() } // Navigate to HomeScreen
+        { text: "OK", onPress: () => navigation.goBack() }
       ]);
     } catch (error) {
       console.error('Login error:', error);
       Alert.alert('Error', error.message || 'Login failed');
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -37,13 +45,23 @@ const LoginScreen = ({navigation}) => {
         placeholder="Username"
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        onChangeText={setPassword}
-        value={password}
-        placeholder="Password"
-        secureTextEntry // Hide password input
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          secureTextEntry={!showPassword}
+          value={password}
+          onChangeText={setPassword}
+          style={styles.passwordInput}
+          placeholder="Enter Password"
+          placeholderTextColor="#aaa"
+        />
+        <MaterialCommunityIcons
+          name={showPassword ? 'eye-off' : 'eye'}
+          size={24}
+          color="#aaa"
+          style={styles.icon}
+          onPress={toggleShowPassword}
+        />
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
@@ -73,6 +91,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '80%',
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  icon: {
+    padding: 10,
   },
   button: {
     width: '80%',

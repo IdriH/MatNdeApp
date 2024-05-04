@@ -23,14 +23,14 @@ const ProductRow = ({ navigation,id,name,category,distributor,manufacturer, orig
       </View>
       <View style={styles.priceAndQuantity}>
         {(user.role ==='admin')?(
-        <Text style={styles.priceBought}>Blihet:{priceBought}Є</Text>
+        <Text style={styles.priceBought}>Blihet:{priceBought} lek</Text>
         ):(null)
         }
         {(user.role ==='admin')?(
         <Text style={styles.quantity}>Sasia:{quantity}</Text>
         ):(null)
         }
-        <Text style={styles.price}>Cmimi:{priceSold}Є</Text>
+        <Text style={styles.price}>Cmimi:{priceSold} lek</Text>
         
       </View>
       { 
