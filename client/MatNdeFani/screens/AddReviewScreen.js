@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet,TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet,TouchableWithoutFeedback ,KeyboardAvoidingView,Platform, ScrollView} from 'react-native';
 import { useState,useEffect } from 'react';
 import { submitReview } from '../services/api';
-import { Alert } from 'react-native';  // Import Alert from react-native
+import { Alert } from 'react-native';  
 const AddReviewScreen = ({navigation,route}) => {
     const [name, setName] = useState('');
     const [review, setReview] = useState('');
@@ -11,8 +11,7 @@ const AddReviewScreen = ({navigation,route}) => {
     const {  professionalID } = route.params; // Destructuring to get addReview and professionalID
 
     
-
-
+   
 
     
 
@@ -67,34 +66,44 @@ const AddReviewScreen = ({navigation,route}) => {
 
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.label}>Your Name:</Text>
+        
+        <KeyboardAvoidingView
+            
+            style={styles.container}
+        >
+        
+       
+            
+            <Text style={styles.label}>Emri:</Text>
             <TextInput 
                 style={styles.input} 
-                placeholder="Enter your name"
+                placeholder="Shkruani emrin tuaj"
                 value={name} 
-                onChangeText={setName} // Update name state when text changes
+                onChangeText={setName} 
             />
-            <Text style={styles.label}>Your Review:</Text>
+            <Text style={styles.label}>Komenti:</Text>
             <TextInput 
                 style={styles.input} 
-                placeholder="Write your review here"
+                placeholder="Shkruaj komentin tend"
                 multiline 
                 numberOfLines={4} 
                 maxLength={200}
                 value={review}
-                onChangeText={setReview} // Update review state when text changes
+                onChangeText={setReview} 
+                
             />
             <View style={styles.starsContainer}>{renderStars()}</View>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity onPress={handleConfirm} style={styles.confirmButton}>
-                    <Text style={styles.buttonText}>Confirm</Text>
+                    <Text style={styles.buttonText}>Konfirmo</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
-                    <Text style={styles.buttonText}>Cancel</Text>
+                    <Text style={styles.buttonText}>Anullo</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        
+        
+        </KeyboardAvoidingView>
     );
 }
 
@@ -137,7 +146,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
     },
-    // Existing styles...
+   
     starsContainer: {
         flexDirection: 'row',
         justifyContent: 'center',

@@ -22,7 +22,7 @@ export const getProducts = async () => {
 
 export const addProduct = async (productData) => {
     try {
-        console.log(productData)
+       // console.log(productData)
         const newProduct = new Products(productData);
         await newProduct.save();
         return newProduct;
@@ -44,7 +44,7 @@ export const updateProductQuantity = async (productName, newQuantity) => {
         product.quantity = newQuantity;
         await product.save();
 
-        console.log('Product     updated successfully');
+        //console.log('Product     updated successfully');
     } catch (error) {
         console.error('Error updating product quantity:', error);
         throw error;
@@ -59,7 +59,7 @@ export const deleteProduct = async (productId) => {
             throw new Error('Product not found');
         }
 
-        console.log('Product deleted successfully');
+        //console.log('Product deleted successfully');
     } catch (error) {
         console.error('Error deleting product:', error);
         throw error;
@@ -94,7 +94,7 @@ export const updateProductInventory = async (products) => {
 // Function to update a product by ID with dynamic fields
 export const updateProduct = async (productId, updateData) => {
     try {
-        console.log('called Update PRoduct')
+       //console.log('called Update PRoduct')
         // Validate updateData to ensure it does not contain fields that shouldn't be updated directly
         if(updateData._id || updateData.__v) {
             throw new Error('Invalid update parameters');
@@ -106,7 +106,7 @@ export const updateProduct = async (productId, updateData) => {
             throw new Error('Product not found');
         }
 
-        console.log('Product updated successfully:', product);
+        //console.log('Product updated successfully:', product);
         return product; // Return the updated product
     } catch (error) {
         console.error('Error updating product:', error);

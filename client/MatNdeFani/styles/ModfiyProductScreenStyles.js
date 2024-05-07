@@ -39,9 +39,9 @@ const styles = StyleSheet.create({
     borderRadius: 5
 },
 deleteButtonText: {
-    color: 'white', // White text for better visibility on red background
+    color: 'white', 
     fontSize: 16,
-    textAlign: 'center', // Center the text inside the button
+    textAlign: 'center', 
 },
   header: {
     fontSize: 32,

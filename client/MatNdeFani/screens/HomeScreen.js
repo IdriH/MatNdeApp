@@ -42,13 +42,13 @@ const HomeScreen = ({ navigation}) => {
     }, [isLoggedIn])
   );
   
-
+/*
   if (isLoggedIn) {
   console.log('Logged in as:', user.username);
   } else {
   console.log('Not logged in');
   }
-
+*/
   const handleLogout = async () => {
     try {
       // Call the logout API
@@ -66,7 +66,7 @@ const HomeScreen = ({ navigation}) => {
 
  
   
-  const backgroundImage = require('../assets/homepage.jpg');
+  const backgroundImage = require('../assets/HomepagePhoto.jpeg');
   
     return (
       <ImageBackground source={backgroundImage} style={styles.backgroundContainer}>
@@ -81,7 +81,7 @@ const HomeScreen = ({ navigation}) => {
           </TouchableOpacity>
           {(user.role ==='admin' || user.role === 'professional') && (
             <TouchableOpacity style={styles.section} onPress={() => navigation.navigate('Orders') }>
-              <Text style={styles.sectionTitle}>Orders</Text>
+              <Text style={styles.sectionTitle}>Porosi</Text>
             </TouchableOpacity>
           )}
           {(user.role ==='professional') && (

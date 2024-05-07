@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     },
     overlayContainer: {
       flex: 1,
-      backgroundColor: 'rgba(255,255,255,0.6)', // This adds an overlay to the image
+      backgroundColor: 'rgba(255,255,200,0.3)', // This adds an overlay to the image
       alignItems: 'flex-start',
       justifyContent: 'flex-start',
       padding: 20,
@@ -18,9 +18,13 @@ const styles = StyleSheet.create({
       fontSize: 32,
       fontWeight: 'bold',
       marginVertical: 50,
-      color: '#333',
+      color: '#460E48',
       textAlign: 'center',
-      alignSelf : 'flex-start'
+      alignSelf : 'flex-start',
+      // Adding text shadow
+      textShadowColor: 'rgba(100, 0, 0, 0.75)',  // Shadow color
+      textShadowOffset: { width: 1, height: 1 },  // Shadow offset
+      textShadowRadius: 4,  // Blur radius
     },
     section: {
       width: '100%',
@@ -44,18 +48,18 @@ const styles = StyleSheet.create({
       textAlign: 'center'
     },
     loginButton: {
-      position: 'absolute', // Position the button absolutely
-      bottom: 30, // Distance from the bottom
-      right: 30, // Distance from the right
+      position: 'absolute', 
+      bottom: 30, 
+      right: 30,
     },
     loginButtonText: {
-      color: '#fff', // Text color for the button
-      backgroundColor: '#460E48', // Background color for the button
+      color: '#fff', 
+      backgroundColor: '#460E48', 
       overflow: 'hidden',
-      paddingHorizontal: 40, // Horizontal padding
-      paddingVertical: 20, // Vertical padding
-      borderRadius: 10, // Rounded corners
-      elevation: 3, // Drop shadow for Android (optional)
+      paddingHorizontal: 40, 
+      paddingVertical: 20, 
+      borderRadius: 10, 
+      elevation: 3, 
       // Additional styles for iOS shadow
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -63,11 +67,11 @@ const styles = StyleSheet.create({
       shadowRadius: 2,
     },
     availabilityContainer: {
-      marginTop: 30, // Adjust the space from the Orders section or above content as needed
-      alignItems: 'center', // Center horizontally in the container
-      width: '100%', // Ensure it spans the full width for proper centering
-      left: 20, // Distance from the left
-      flexDirection: 'row', // Align button and status indicator horizontally
+      marginTop: 30, 
+      alignItems: 'center', 
+      width: '100%', 
+      left: 20, 
+      flexDirection: 'row', 
           
     },
     

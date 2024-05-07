@@ -1,7 +1,7 @@
 // services/api.js
-
 const API_BASE_URL = 'http://192.168.30.30:3000'; // This should be the base URL of your back-end server
 export default API_BASE_URL;
+
 
 export const fetchProducts = async () => {
   try {
@@ -10,7 +10,7 @@ export const fetchProducts = async () => {
       throw new Error('Network response was not ok');
     }
     const products = await response.json();
-    return products.data; // assuming the server response has a data property with the products
+    return products.data; 
   } catch (error) {
     console.error('There has been a problem with your fetch operation:', error);
     throw error;
@@ -24,7 +24,7 @@ export const fetchProfessionals = async () => {
         throw new Error('Network response was not ok');
       }
       const professionals = await response.json();
-      return professionals.data; // assuming the server response has a data property with the products
+      return professionals.data;
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -38,7 +38,7 @@ export const fetchProfessionals = async () => {
         throw new Error('Network response was not ok');
       }
       const professional = await response.json();
-      return professional.data; // assuming the server response has a data property with the professional
+      return professional.data; 
     } catch (error) {
       console.error('There has been a problem with your fetch operation:', error);
       throw error;
@@ -68,11 +68,11 @@ export const fetchProfessionals = async () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              // Ensure these property names match exactly what your backend expects.
-              professionalID: reviewData.professionalID, // This is correct as your schema expects a professionalID
+              
+              professionalID: reviewData.professionalID, 
               score: reviewData.score,
-              reviewerName: reviewData.reviewerName, // Changed to use reviewerName instead of name
-              comment: reviewData.comment, // Changed to use comment instead of text
+              reviewerName: reviewData.reviewerName, 
+              comment: reviewData.comment,
           })
           });
           const result = await response.json();
@@ -81,7 +81,7 @@ export const fetchProfessionals = async () => {
         }
 
         
-        console.log('Review submitted successfully', result);
+        //console.log('Review submitted successfully', result);
         return result;
     } catch (error) {
         console.error('Error submitting review:', error);
@@ -91,20 +91,20 @@ export const fetchProfessionals = async () => {
 
 export const submitOrder = async (orderData) => {
   try {
-      console.log(JSON.stringify(orderData) + "LLLLLLLLLLLLLLLLL")
+      
       const response = await fetch(`${API_BASE_URL}/orders/add`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify(orderData) // Directly pass the correctly structured `orderData`
+          body: JSON.stringify(orderData) 
       });
       if (!response.ok) {
           throw new Error(response.error || 'Failed to submit order'  );
       }
 
       const result = await response.json();
-      console.log('Order submitted successfully', result);
+      //console.log('Order submitted successfully', result);
       return result;
   } catch (error) {
       console.error('Error submitting order:', error);
@@ -119,7 +119,7 @@ export const fetchOrdersForProfessional = async (professionalID) => {
       throw new Error('Failed to fetch orders');
     }
     const orders = await response.json();
-    return orders.data; // Assuming your API returns an object with a 'data' field containing the orders
+    return orders.data;
   } catch (error) {
     console.error('Error fetching orders:', error);
     throw error;
@@ -131,7 +131,7 @@ export const fetchOrdersForProfessional = async (professionalID) => {
 export const toggleProfessionalStatus = async (professionalID) => {
   try {
     const response = await fetch(`${API_BASE_URL}/professionals/status/${professionalID}`, {
-      method: 'GET', // Assuming GET request is sufficient as per your route setup
+      method: 'GET', 
     });
     if (!response.ok) {
       throw new Error('Network response was not ok');
@@ -160,14 +160,14 @@ export const addProduct = async (productData) => {
       return data;
   } catch (error) {
       console.error('Error adding product:', error);
-      throw error;  // Ensure the error object is thrown with message intact
+      throw error;  
   }
 };
 
 // api.js
 export const updateProduct = async (productID, productData) => {
   try {
-    console.log(productID)
+    
     const response = await fetch(`${API_BASE_URL}/products/modify/${productID}`, {
       method: 'PUT',
       headers: {
@@ -181,7 +181,7 @@ export const updateProduct = async (productID, productData) => {
       throw new Error(data.error || 'Failed to update product');
     }
     
-    return data; // Returns the response from the server
+    return data; 
   } catch (error) {
     console.error('Error updating product:', error);
     throw error;
@@ -196,11 +196,11 @@ export const deleteProduct = async (productId) => {
         'Content-Type': 'application/json',
       },
     });
-    console.log(response)
+   
     if (!response.ok) {
       throw new Error('Failed to delete product');
     }
-    return await response.json(); // Returns the server's response which should indicate success
+    return await response.json(); 
   } catch (error) {
     console.error('Error deleting product:', error);
     throw error;
@@ -219,7 +219,7 @@ export const fetchAllOrders = async () => {
       throw new Error('Failed to fetch all orders');
     }
     const orders = await response.json();
-    return orders.data; // Assuming the API returns an object with a 'data' field containing all the orders
+    return orders.data; 
   } catch (error) {
     console.error('Error fetching all orders:', error);
     throw error;
@@ -354,7 +354,7 @@ export const addProfessional = async (formData) => {
 
 export const modifyProfessional = async (professionalID, updatedFields) => {
   try {
-    console.log("Api caled")
+    
     const response = await fetch(`${API_BASE_URL}/professionals/modify`, {
       method: 'PUT',
       headers: {
@@ -378,6 +378,30 @@ export const modifyProfessional = async (professionalID, updatedFields) => {
   }
 };
 
+export const updateProfessionalPicture = async (formData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/professionals/updatePicture`, {
+      method: 'PUT',
+      body: formData,
+    });
+
+    const responseData = await response.json(); 
+
+   
+
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Failed to update profile picture');
+    }
+
+    return responseData;
+  } catch (error) {
+    console.error('Error updating profile picture:', error);
+    throw error;
+  }
+};
+
+
+
 
 /**
  * Deletes a professional by their ID.
@@ -396,12 +420,12 @@ export const deleteProfessional = async (professionalID) => {
     });
 
     if (!response.ok) {
-      // If the server responds with an error status, throw an error with the response
+     
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to delete professional');
     }
 
-    // If the response is successful, return the JSON data
+   
     return await response.json();
   } catch (error) {
     console.error('Error deleting professional:', error.message);
@@ -446,16 +470,16 @@ export const deleteReview = async (reviewId) => {
     });
 
     if (!response.ok) {
-      // If the server responds with an error status, throw an error with the response
+      
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to delete review');
     }
 
-    // If the response is successful, return the JSON data
+    
     return await response.json();
   } catch (error) {
     console.error('Error deleting review:', error.message);
-    throw error; // Rethrow the error to handle it where the function is called
+    throw error; 
   }
 };
 

@@ -21,7 +21,7 @@ const ProfessionalsScreen = ({ navigation }) => {
       setProfessionals(professionalsFromApi); // Assuming the API returns the array of professionals directly
     } catch (error) {
       console.error('Failed to fetch professionals:', error);
-      // Implement error handling here
+     
     }
   };
   
@@ -62,25 +62,25 @@ const ProfessionalsScreen = ({ navigation }) => {
      
       
 
-  // Replace with your actual background image
-  const backgroundImage = require('../assets/homepage.jpg');
+ 
+  const backgroundImage = require('../assets/Professionals.jpeg');
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundContainer}>
       <View style={styles.container}>
         <Text style={styles.header}>Profesionist</Text>
         <TextInput
-          placeholder="Search by Category."
+          placeholder="Kerko sipas kategorise..."
           style={styles.searchBox}
           value={searchQuery}
-          onChangeText={text => setSearchQuery(text)} // Update searchQuery state on text change
+          onChangeText={text => setSearchQuery(text)} 
         />
 
         <FlatList
           data={filteredProfessionals}
           keyExtractor={(item) => item.professionalID}
           renderItem={renderProfessional}
-          // The rest of your props
+         
         />
         {(user.role === 'admin')?(
           <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate('AddProfessional')}}>

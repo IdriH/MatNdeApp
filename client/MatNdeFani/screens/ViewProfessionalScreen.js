@@ -4,11 +4,11 @@ import { Linking } from 'react-native';
 import styles from '../styles/ViewProfessionalScreenStyles';
 import { useState,useEffect } from 'react';
 import { useUser } from '../state/UserContext';
-import { fetchProfessional,fetchReviewsForProfessional, modifyProfessional ,deleteProfessional , deleteReview} from '../services/api';
+import { fetchProfessional,fetchReviewsForProfessional, modifyProfessional ,deleteProfessional , deleteReview , updateProfessionalPicture} from '../services/api';
 import { Alert } from 'react-native';
 import API_BASE_URL from '../services/api';
 import ProfileImageEditor from '../components/ProfileImageEditor'
-
+import { Platform } from 'react-native';
 const ViewProfessionalScreen = ({ route, navigation }) => {
   const { professionalID } = route.params;
 
@@ -20,17 +20,17 @@ const ViewProfessionalScreen = ({ route, navigation }) => {
     const [phoneNumber, setPhoneNumber] = useState(professional.phoneNumber);
     const [shortDescription, setShortDescription] = useState(professional.shortDescription);
     
-  
+    const [image, setImage] = useState(professional.profileImage);
 
     useEffect(() => {
       const loadProfessional = async () => {
         try {
-          console.log('Fetching details for ProfessionalID:', professionalID);
+          //console.log('Fetching details for ProfessionalID:', professionalID);
           const professionalFromApi = await fetchProfessional(professionalID);
-          setProfessional(professionalFromApi); // Assuming the API returns the professional object directly
+          setProfessional(professionalFromApi); 
         } catch (error) {
           console.error('Failed to fetch professional:', error);
-          // Implement error handling here
+          
         }
       };
       if (professionalID) {
@@ -43,13 +43,13 @@ const ViewProfessionalScreen = ({ route, navigation }) => {
     useEffect(() => {
       const loadReviewsForProfessional = async () => {
         try {
-          console.log('Fetching details for ProfessionalID:', professionalID);
+         // console.log('Fetching details for ProfessionalID:', professionalID);
           const reviewsFromApi = await fetchReviewsForProfessional(professionalID);
-          console.log(reviewsFromApi)
-          setReviews(reviewsFromApi); // Assuming the API returns the professional object directly
+         // console.log(reviewsFromApi)
+          setReviews(reviewsFromApi);
         } catch (error) {
           console.error('Failed to fetch reviews for professional:', error);
-          // Implement error handling here
+         
         }
       };
       if (professionalID) {
@@ -63,13 +63,13 @@ useEffect(() => {
   const unsubscribe = navigation.addListener('focus', () => {
     const loadReviewsForProfessional = async () => {
       try {
-        console.log('Fetching details for ProfessionalID:', professionalID);
+       // console.log('Fetching details for ProfessionalID:', professionalID);
         const reviewsFromApi = await fetchReviewsForProfessional(professionalID);
-        console.log(reviewsFromApi)
-        setReviews(reviewsFromApi); // Assuming the API returns the professional object directly
+        //console.log(reviewsFromApi)
+        setReviews(reviewsFromApi); 
       } catch (error) {
         console.error('Failed to fetch reviews for professional:', error);
-        // Implement error handling here
+        
       }
     };
     if (professionalID) {
@@ -85,8 +85,21 @@ useEffect(() => {
     setCategory(professional.category);
     setPhoneNumber(professional.phoneNumber);
     setShortDescription(professional.shortDescription);
+   
   }
 }, [professional]);
+
+useEffect(() => {
+  if (professional.profilePicture) {
+      // Replace backslashes if they exist just in case
+      const imagePath = professional.profilePicture.replace(/\\/g, '/');
+      const imageUri = `${API_BASE_URL}/${imagePath}`;
+      setImage(imageUri);
+  } else {
+      setImage(require('../assets/AnonimProfPic.jpg'));
+  }
+}, [professional.profilePicture]);
+
 
 
 
@@ -112,9 +125,9 @@ useEffect(() => {
         profilePicture: professional.profilePicture,
       };
       const response = await modifyProfessional(professionalID, updatedFields);
-      console.log('API Called:', response);
+      
   
-      // Assuming 'response' contains a 'message' property that you want to display
+      
       Alert.alert('Success', 'Professional details updated successfully', [
         { text: 'OK', onPress: () => navigation.navigate('Professionals') }
       ]);
@@ -179,45 +192,58 @@ useEffect(() => {
 
   const handleUpdateImage = async (newImageUri) => {
     try {
-        // Update the professional with the new image URI
-        const updatedFields = { profilePicture: newImageUri };
-        const response = await modifyProfessional(professionalID, updatedFields);
+        console.log(newImageUri + "HIUHIUHIUHIU")
+        const formData = new FormData();
+        formData.append('professionalID', professionalID);
 
-        if (response.status === 200) {
-            Alert.alert('Success', 'Profile picture updated successfully');
-            // Optionally, update local state or perform further actions
-        } else {
-            throw new Error('Failed to update profile picture');
+        if (newImageUri) {
+            const uri = Platform.OS === 'android' ? newImageUri : newImageUri.replace('file://', '');
+            const filename = uri.split('/').pop();
+            const match = /\.(\w+)$/.exec(filename);
+            const type = match ? `image/${match[1]}` : 'image';
+            const file = {
+                uri,
+                name: filename,
+                type
+            };
+            formData.append('profilePicture', file);
         }
-    } catch (error) {
+
+        const responseData = await updateProfessionalPicture(formData);
+        if (responseData) {
+          Alert.alert('Success', 'Profile picture updated successfully');
+          setProfessional(prev => ({...prev, profilePicture: `${API_BASE_URL}/${responseData.data.profilePicture}`}));
+        } else {
+          throw new Error('Failed to update profile picture');
+        }
+      } catch (error) {
         console.error('Error updating profile picture:', error);
-        Alert.alert('Error', 'Failed to update profile picture');
-    }
+        throw new Error('Network or server error occurred: ' + error.message);
+      }
 };
+
 
 const handleRemoveImage = async () => {
   try {
       // Remove the professional's profile picture by setting it to null or an empty string
       const updatedFields = { profilePicture: '' };
-      const response = await modifyProfessional(professionalID, updatedFields);
+      const data = await modifyProfessional(professionalID, updatedFields);
 
-      if (response.status === 200) {
-          Alert.alert('Success', 'Profile picture removed successfully');
-          // Optionally, update local state or perform further actions
-      } else {
-          throw new Error('Failed to remove profile picture');
-      }
+      Alert.alert('Success', 'Profile picture removed successfully');
+      
   } catch (error) {
       console.error('Error removing profile picture:', error);
-      Alert.alert('Error', 'Failed to remove profile picture');
+      Alert.alert('Error', error.message || 'Failed to remove profile picture');
   }
 };
-
-
 
 const window = Dimensions.get('window')
 
 const imageUri = professional.profilePicture ? { uri: `${API_BASE_URL}/${professional.profilePicture}` } : require('../assets/AnonimProfPic.jpg');
+
+  //const imagePath = professional.profilePicture.replace(/\\/g, '/');
+  //const imageUri = professional.profilePicture ? `${API_BASE_URL}/${imagePath}` : require('../assets/AnonimProfPic.jpg');
+
 
   return (
     <View style={styles.container}>
@@ -226,33 +252,38 @@ const imageUri = professional.profilePicture ? { uri: `${API_BASE_URL}/${profess
   
       <View style={styles.profileImageContainer} >
       <Image source={imageUri} style={styles.profileImage} />
+      {(user.role === 'admin')?(
       <ProfileImageEditor
-          imageUri={imageUri.uri}
+          
+          setImage={setImage}
+          
           onUpdate={handleUpdateImage}
           onRemove={handleRemoveImage}
       />
+      ):null
+      }
       </View> 
       
         <View style={styles.infoContainer}>
-          <Text style={styles.infoText}>Name: {professional.fullName}</Text>
-          <Text style={styles.infoText}>Availability: {professional.available ? 'Available' : 'Unavailable'}</Text>
+          <Text style={styles.infoText}>Emri: {professional.fullName}</Text>
+          <Text style={styles.infoText}>Disponibiliteti: {professional.available ? 'Available' : 'Unavailable'}</Text>
           <Text style={styles.infoText}>Review Score: {professional.reviewScore}</Text>
           <View style = {styles.infoContainer}>
                 {(user.role === 'admin') ? (
                 <TextInput 
                     style={styles.editableTextInput}
-                    defaultValue={professional.category} // Use defaultValue for initial rendering
+                    defaultValue={professional.category} 
                     value={category} onChangeText={setCategory}
                 />
                 ) : (
-                <Text style={styles.infoText}>Category: {professional.category}</Text>
+                <Text style={styles.infoText}>Kategoria: {professional.category}</Text>
              )}
           </View>
           <View style = {styles.infoContainer}>
                 {(user.role === 'admin') ? (
                 <TextInput 
                     style={styles.editableTextInput}
-                    defaultValue={professional.phoneNumber} // Use defaultValue for initial rendering
+                    defaultValue={professional.phoneNumber} 
                     value={phoneNumber} onChangeText={setPhoneNumber}
                 />
                 ) : (
@@ -275,12 +306,12 @@ const imageUri = professional.profilePicture ? { uri: `${API_BASE_URL}/${profess
               />
               
             ):(
-                <Text style={styles.shortDescription}>Description: {professional.ShortDescription}</Text>
+                <Text style={styles.shortDescription}>Pershkrimi: {professional.ShortDescription}</Text>
             )}
     
-      <Text style = {{fontSize : 16}}>Customer Reviews:</Text>
+      <Text style = {{fontSize : 16}}>Komente te klienteve:</Text>
       <FlatList
-        data={reviews} // Assuming reviews is a list of review objects
+        data={reviews} 
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderReview}
       />
@@ -302,7 +333,7 @@ const imageUri = professional.profilePicture ? { uri: `${API_BASE_URL}/${profess
     // This will render for users who are neither admin nor professionals
     <View style={styles.addReviewButton}>
       <TouchableOpacity onPress={navigateToAddReview}>
-        <Text style={styles.addReviewButtonText}>+ Add Review</Text>
+        <Text style={styles.addReviewButtonText}>+ Shto koment</Text>
       </TouchableOpacity>
     </View>
   )}

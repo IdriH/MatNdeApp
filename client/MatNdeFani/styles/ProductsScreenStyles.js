@@ -9,15 +9,16 @@ const styles = StyleSheet.create({
 
   container: {
     
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // You can adjust the alpha value for transparency
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // You can adjust the alpha value for transparency
     flex: 1,
     alignItems: 'center',
     paddingTop: 20,
+    paddingBottom: 70,
   },
   header: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#460E48',
     marginTop: 20,
     marginBottom: 20,
   },
@@ -51,14 +52,14 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   modifyButtonText: {
-    color: '#000', // Text color for the button
+    color: '#000', 
     textAlign: 'center',
   },
   addButton: {
     position: 'absolute',
     bottom: 30,
     right: 30,
-    backgroundColor: '#460E48', // Use your app theme color here
+    backgroundColor: '#460E48',
     padding: 15,
     borderRadius: 30, // Circular button
     elevation: 3,
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  // ... You may want to refine these styles further
+
 });
 
 export default styles;

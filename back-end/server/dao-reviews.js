@@ -12,13 +12,13 @@ export const getReviews = async(pID) => {
 
 export const addReview = async (review) => {
     try {
-        console.log("-------" + review.professionalID + review.score + review.reviewerName + "" + review.comment);
-        console.log("-------" + review);
+        //console.log("-------" + review.professionalID + review.score + review.reviewerName + "" + review.comment);
+       // console.log("-------" + review);
 
         const newReview = new Reviews(review);
         await newReview.save();  // Save the review first
 
-        console.log('Review saved successfully');
+        //console.log('Review saved successfully');
 
         // Fetch all reviews for the given professionalID to compute the new average
         const reviews = await Reviews.find({ professionalID: review.professionalID });
@@ -35,7 +35,7 @@ export const addReview = async (review) => {
             );
         }
 
-        console.log('Average review score updated successfully');
+        //console.log('Average review score updated successfully');
     } catch (err) {
         console.error("Could not save review:", err);
         throw err;

@@ -7,13 +7,12 @@ import API_BASE_URL from '../services/api'
 
 
 
-// Assuming 'category' will be added to your data model
+
 const ProfessionalRow = ({navigation,professionalID ,fullName, category, available, reviewScore,profilePicture}) => {
     
-  console.log(profilePicture + "PRRRRRRRRR");
-  console.log(API_BASE_URL)
+
   const uri =  `${API_BASE_URL}/${profilePicture}`
-  console.log(uri)
+  
     const imageUri = profilePicture ? { uri: `${API_BASE_URL}/${profilePicture}` } : require('../assets/AnonimProfPic.jpg');
 
     

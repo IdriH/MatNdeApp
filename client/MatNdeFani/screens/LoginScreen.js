@@ -21,11 +21,11 @@ const LoginScreen = ({navigation}) => {
       const trimmedUsername = username.trim();
       const trimmedPassword = password.trim();
       const lowerCaseTrimmedPassword = trimmedPassword.toLowerCase();
-      console.log(lowerCaseTrimmedPassword);
+      //console.log(lowerCaseTrimmedPassword);
       const data = await login(trimmedUsername, lowerCaseTrimmedPassword);
       setUser(data);
       setIsLoggedIn(true);
-      console.log('Login successful:', data);
+      
       Alert.alert('Success', 'Logged in successfully!', [
         { text: "OK", onPress: () => navigation.goBack() }
       ]);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { submitOrder } from '../services/api';
 
-import { Alert } from 'react-native';  // Ensure to import Alert
+import { Alert } from 'react-native';  
 
 const OrderScreen = ({ route, navigation }) => {
   const [order, setOrder] = useState(route.params.order);
@@ -34,28 +34,28 @@ const handleConfirm = async () => {
             price: product.priceSold,
             quantity: product.quantity,
         })),
-        status: 'pending', // Adjust based on your application's logic
+        status: 'pending', 
     };
 
     try {
         const result = await submitOrder(orderData);
         Alert.alert(
-            'Success',  // Title of the alert
-            'Order submitted successfully',  // Message of the alert
+            'Success',  
+            'Order submitted successfully', 
             [
                 { 
                     text: 'OK', 
-                    onPress: () => navigation.navigate('Home')  // Navigate back home or to the appropriate screen
+                    onPress: () => navigation.navigate('Home')  
                 }
             ]
         );
     } catch (error) {
         console.error('Failed to submit order:', error);
         Alert.alert(
-            'Error',  // Title of the alert
-            'Failed to submit order: ' + (error.message || 'Unknown error'),  // Error message
+            'Error',  
+            'Failed to submit order: ' + (error.message || 'Unknown error'),  
             [
-                { text: 'OK', onPress: () => console.log('OK Pressed') }  // Button to dismiss the alert
+                { text: 'OK', onPress: () => navigation.navigate('Home') }  
             ]
         );
     }

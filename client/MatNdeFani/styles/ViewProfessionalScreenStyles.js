@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
       marginTop: 5,
     },
     phoneNumber: {
-      color: '#007bff', // Example color for a link
-      textDecorationLine: 'underline', // Underline to indicate it's clickable
+      color: '#007bff',
+      textDecorationLine: 'underline', 
     },
     shortDescription : {
       color : '#000000',
@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     deleteReviewButton: {
       position: 'absolute',
       bottom: 20,
-      right: 20, // Positioned on the left side
-      backgroundColor: 'red', // Red background for the delete button
+      right: 20, 
+      backgroundColor: 'red', 
       padding: 10,
-      borderRadius: 10, // Similar circular shape as the modify button
+      borderRadius: 10, 
       elevation: 4,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -88,10 +88,10 @@ const styles = StyleSheet.create({
     deleteButton: {
       position: 'absolute',
       bottom: 20,
-      left: 20, // Positioned on the left side
-      backgroundColor: 'red', // Red background for the delete button
+      left: 20, 
+      backgroundColor: 'red', 
       padding: 10,
-      borderRadius: 30, // Similar circular shape as the modify button
+      borderRadius: 30, 
       elevation: 4,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -108,15 +108,15 @@ const styles = StyleSheet.create({
       marginBottom: 5,
       borderBottomWidth: 1,
       borderColor: 'grey',
-      width: '100%', // Ensure it occupies the full width
+      width: '100%', 
     },
     addReviewButton: {
-      position: 'absolute', // Position the button over the container
-      bottom: 20, // Distance from the bottom of the screen
-      right: 20, // Distance from the right of the screen
-      backgroundColor: '#007BFF', // Choose a background color that fits your app's theme
+      position: 'absolute', 
+      bottom: 20, 
+      right: 20, 
+      backgroundColor: '#007BFF', 
       padding: 10,
-      borderRadius: 30, // Circular button
+      borderRadius: 30, 
       elevation: 4, // Shadow for Android
       shadowColor: '#000', // Shadow for iOS
       shadowOffset: { width: 0, height: 2 },
@@ -124,15 +124,15 @@ const styles = StyleSheet.create({
       shadowRadius: 3.84,
     },
     addReviewButtonText: {
-      color: '#FFFFFF', // Text color
-      fontSize: 16, // Adjust to your liking
+      color: '#FFFFFF', 
+      fontSize: 16, 
       fontWeight: 'bold',
     },
       modifyButton: {
-      position: 'absolute', // Position the button over the container
-      bottom: 20, // Distance from the bottom of the screen
-      right: 20, // Distance from the right of the screen
-      backgroundColor: '#d6ce20', // Choose a background color that fits your app's theme
+      position: 'absolute', 
+      bottom: 20, 
+      right: 20, 
+      backgroundColor: '#d6ce20', 
       padding: 10,
       borderRadius: 30, // Circular button
       elevation: 4, // Shadow for Android
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
       shadowRadius: 3.84,
     },
       modifyButtonText: {
-      color: '#333109', // Text color
-      fontSize: 16, // Adjust to your liking
+      color: '#333109', 
+      fontSize: 16, 
       fontWeight: 'bold',
     },
     

@@ -3,17 +3,17 @@ import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { toggleProfessionalStatus ,fetchProfessional } from '../services/api';
 
 const AvailabilityIndicator = ({professionalID}) => {
-  const [isAvailable, setIsAvailable] = useState(false); // Initial availability status
+  const [isAvailable, setIsAvailable] = useState(false); 
 
   
   const loadInitialStatus = async () => {
     try {
         const response = await fetchProfessional(professionalID);
         if (response ) {
-            const status = response.available; // Ensure that 'data' and 'available' are correctly accessed
+            const status = response.available; 
             setIsAvailable(status);
         } else {
-            throw new Error('Invalid response structure'); // Handles cases where the data might not be as expected
+            throw new Error('Invalid response structure'); 
         }
     } catch (error) {
         console.error('Error loading initial status:', error);
@@ -39,7 +39,7 @@ loadInitialStatus();
         style={[styles.button, isAvailable ? styles.available : styles.unavailable]}
         onPress={toggleAvailability}
       >
-        <Text style={styles.buttonText}>Toggle Availability</Text>
+        <Text style={styles.buttonText}>Disponibiliteti</Text>
       </TouchableOpacity>
       <View style={[styles.statusIndicator, isAvailable ? styles.available : styles.unavailable]} />
     </View>
@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      padding: 15, // Increase padding for more spacing around the button and status indicator
-      backgroundColor: '#ffffff', // Optional: Add a background color to the container for better visibility
-      borderRadius: 25, // Soften the corners of the container
+      padding: 15, 
+      backgroundColor: '#ffffff', 
+      borderRadius: 25, 
       shadowColor: "#000", // Adding shadow for depth
       shadowOffset: {
         width: 0,
@@ -64,26 +64,26 @@ const styles = StyleSheet.create({
     },
     button: {
       paddingVertical: 10,
-      paddingHorizontal: 20, // Increase padding for a wider button
-      borderRadius: 20, // Rounded corners for the button
-      backgroundColor: '#007BFF', // A more neutral button color
-      marginRight: 20, // Added space between button and status indicator
+      paddingHorizontal: 20, 
+      borderRadius: 20, 
+      backgroundColor: '#007BFF', 
+      marginRight: 20, 
     },
     statusIndicator: {
-      width: 24, // Increase size for a more noticeable indicator
-      height: 24, // Maintain aspect ratio for circle shape
-      borderRadius: 12, // Ensure the indicator is perfectly round
+      width: 24, 
+      height: 24, 
+      borderRadius: 12, 
     },
     available: {
-      backgroundColor: 'green', // Bright green for available
+      backgroundColor: 'green', 
     },
     unavailable: {
-      backgroundColor: 'darkred', // Dark red for unavailable for better contrast
+      backgroundColor: 'darkred', 
     },
     buttonText: {
       color: 'white',
       fontSize: 16,
-      fontWeight: 'bold', // Make text bold for better readability
+      fontWeight: 'bold', 
     },
   });
   

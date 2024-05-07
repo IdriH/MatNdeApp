@@ -11,16 +11,16 @@ import { useProducts } from '../state/ProductsContext';
 
 const ProductsScreen = ({ navigation }) => {
   const { user } = useUser();
-  const { products ,setProducts,updateProducts} = useProducts(); // Assuming useProducts returns an object with a products array
+  const { products ,setProducts,updateProducts} = useProducts(); 
   
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [pendingOrder, setPendingOrder] = useState({
-    // orderID is usually assigned by the backend; assuming it's here as a placeholder
+   
     professionalID: user?.id || 1, // Dynamically setting professionalID based on user context
     products: [],
-    status: 'pending', // Setting the initial order status to 'pending'
-    createdAt: new Date().toISOString(), // You might let the backend handle `createdAt` timestamps
+    status: 'pending', 
+    createdAt: new Date().toISOString(), 
 });
 
   
@@ -32,7 +32,7 @@ const ProductsScreen = ({ navigation }) => {
       };
 
       fetchAndUpdateProducts();
-      console.log("testttttttttttttttttttttttt")
+      
     }, [])
   );
   
@@ -78,7 +78,7 @@ const ProductsScreen = ({ navigation }) => {
           if (index === productIndex) {
             return { ...p, quantity: p.quantity + 1 }; // Increment quantity
           }
-          console.log(p);
+          
           return p;
         });
       } else {
@@ -125,7 +125,7 @@ const ProductsScreen = ({ navigation }) => {
         resetOrder: () => {
             setTotalCount(0);
             setPendingOrder({
-                professionalID: user?.id || 1, // Reset to initial state as per your logic
+                professionalID: user?.id || 1, // Reset to initial state 
                 products: [],
                 status: 'pending',
                 createdAt: new Date().toISOString(),
@@ -165,24 +165,24 @@ const ProductsScreen = ({ navigation }) => {
   };
 
   
-  // Replace with your actual background image
-  const backgroundImage = require('../assets/homepage.jpg');
+  
+  const backgroundImage = require('../assets/ProductScreen.jpeg');
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundContainer}>
       <View style={styles.container}>
         <Text style={styles.header}>Produkte</Text>
         <TextInput
-          placeholder="Search for products..."
+          placeholder="Kerko..."
           style={styles.searchBox}
           value={searchQuery}
-          onChangeText={setSearchQuery} // Update searchQuery state on text change
+          onChangeText={setSearchQuery} 
         />
         <FlatList
           data={filteredProducts}
           keyExtractor={(item) => item._id}
           renderItem={renderProduct}
-          // The rest of your props
+         
         />
         
         {

@@ -1,6 +1,8 @@
 import { Professionals , Users } from "../db/schemas.js";
 import bcrypt from 'bcrypt'
 import mongoose from "mongoose";
+import fs from 'fs'
+import path from 'path'
 
 export const getProfessionals = async () => {
     try{
@@ -108,7 +110,7 @@ export const addProfessionalWithUser = async function(professionalData) {
 export const addProfessionalWithUser = async function(professionalData) {
     try {
 
-        console.log(professionalData.profilePicture)
+        //console.log(professionalData.profilePicture)
         const salt = await bcrypt.genSalt(10); // Generate salt
         const hash = await bcrypt.hash(professionalData.password, salt); // Hash the password with the salt
 
@@ -129,10 +131,10 @@ export const addProfessionalWithUser = async function(professionalData) {
             phoneNumber: professionalData.phoneNumber,
             profilePicture: professionalData.profilePicture,
         });
-        console.log(newProfessional.image + "DPDPDPDPDPDPDDPDPDPCDP")
+        //console.log(newProfessional.image + "DPDPDPDPDPDPDDPDPDPCDP")
         await newProfessional.save();
 
-        console.log('Professional and user added successfully');
+        //console.log('Professional and user added successfully');
         return { user: savedUser, professional: newProfessional };
     } catch (error) {
         console.error('Error adding professional and user:', error);
@@ -145,7 +147,7 @@ export const modifyProfessional = async (professionalID, updatedFields) => {
     try {
         await Professionals.updateOne({ professionalID: professionalID }, updatedFields);
 
-        console.log('Professional modified successfully');
+        //console.log('Professional modified successfully');
     } catch (error) {
         console.error('Error modifying professional:', error);
         throw error;
@@ -158,9 +160,46 @@ export const deleteProfessional = async (professionalID) => {
         await Professionals.deleteOne({ professionalID: professionalID });
         await Users.findByIdAndDelete(professionalID);
 
-        console.log('Professional deleted successfully');
+        //console.log('Professional deleted successfully');
     } catch (error) {
         console.error('Error deleting professional:', error);
         throw error;
     }
 };
+
+export const updateProfessionalPicture = async function(professionalID, updateData) {
+    try {
+        //console.log('test')
+      const professional = await Professionals.findOne({ professionalID: professionalID });
+      if (!professional) {
+        throw new Error('Professional not found');
+      }
+        /*
+        // Check if a new picture is being set and it's different from the current one
+        if (professional.profilePicture && updateData.profilePicture !== professional.profilePicture) {
+            // Construct the full path for the existing file
+            const existingFilePath = path.join(__dirname, 'uploads', professional.profilePicture);
+
+            // Delete the existing file
+            fs.unlink(existingFilePath, (err) => {
+                if (err) {
+                    console.error('Failed to delete old profile picture:', err);
+                    // Optionally throw an error or handle this case specifically
+                } else {
+                    console.log('Old profile picture deleted successfully');
+                }
+            });
+        }
+        */
+  
+      professional.profilePicture = updateData.profilePicture;
+      await professional.save();
+      
+      //console.log("DP   Updated professional:", professional);
+      return professional;
+    } catch (error) {
+      console.error('DAO error updating professional picture:', error);
+      throw error;
+    }
+  };
+  

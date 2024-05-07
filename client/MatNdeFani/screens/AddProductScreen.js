@@ -78,18 +78,18 @@ const AddProductScreen = ({navigation}) => {
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Bought</Text>
-                        <TextInput style={styles.input} value={priceBought}  onChangeText={setPriceBought}/>
+                        <TextInput style={styles.input} value={priceBought}  onChangeText={setPriceBought}  keyboardType="phone-pad"/>
                     </View>
 
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Sold</Text>
-                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold}  />
+                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold}  keyboardType="phone-pad"/>
                     </View>
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Quantity</Text>
-                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity} />
+                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity} keyboardType="phone-pad"/>
                     </View>
 
                     <View style={styles.buttonContainer}>

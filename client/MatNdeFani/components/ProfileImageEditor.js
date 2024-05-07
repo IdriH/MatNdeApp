@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { View, Image, Text, TouchableOpacity, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import styles from '../styles/ProfileImageEditorStyles'; // Define and import your styles accordingly
+import styles from '../styles/ProfileImageEditorStyles'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-const ProfileImageEditor = ({ imageUri, onUpdate, onRemove }) => {
-    const [image, setImage] = useState(imageUri);
+
+
+
+const ProfileImageEditor = ({  onUpdate, onRemove , setImage }) => {
+    
+    
     const defaultImg = require('../assets/AnonimProfPic.jpg');
     const iconSize = 30;
 
@@ -20,17 +24,19 @@ const ProfileImageEditor = ({ imageUri, onUpdate, onRemove }) => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4, 3],
+            aspect: [4, 4],
             quality: 1,
         });
 
         if (!result.canceled) {
-            setImage(result.uri);
-            onUpdate(result.uri);  // Call the onUpdate prop function passing new image uri
+            const imageUri = result.assets[0].uri
+            setImage(imageUri);
+            onUpdate(imageUri);  // Call the onUpdate prop function passing new image uri
         }
     };
 
     const takePhoto = async () => {
+        console.log("TESSSSSSSSSSSSSSSSSSSSSSSTT")
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
         if (status !== 'granted') {
             Alert.alert('Permission Denied', 'Sorry, we need camera permissions to make this work!');
@@ -44,14 +50,17 @@ const ProfileImageEditor = ({ imageUri, onUpdate, onRemove }) => {
         });
 
         if (!result.canceled) {
-            setImage(result.uri);
-            onUpdate(result.uri);  // Call the onUpdate prop function passing new image uri
+            const imageUri = result.assets[0].uri
+            
+            console.log(imageUri + "URI IN PROFILE IMAFE EDITOR ")
+            setImage(imageUri);
+            onUpdate(imageUri);  
         }
     };
 
     const removeImage = () => {
-        setImage(null); // Remove image from local state
-        onRemove(); // Call the onRemove prop function
+        setImage(null); 
+        onRemove(); 
     };
 
     return (

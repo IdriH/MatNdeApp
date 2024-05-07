@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         height: '100%',
     },
     container: {
-        backgroundColor: 'rgba(255, 255, 255, 0.8)', // Adjusted for a slightly different look
+        backgroundColor: 'rgba(230, 255, 230, 0.5)', // Adjusted for a slightly different look
         flex: 1,
         alignItems: 'center',
         paddingTop: 20,
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#460E48',
         marginTop: 20,
         marginBottom: 20,
     },
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 30,
         right: 30,
-        backgroundColor: '#007BFF', // Different color for differentiation
+        backgroundColor: '#007BFF', 
         padding: 15,
         borderRadius: 30,
         elevation: 3,
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
     },
-    // Add or adjust other styles as necessary
+   
 });
 
 export default styles;

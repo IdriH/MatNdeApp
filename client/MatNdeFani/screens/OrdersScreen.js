@@ -42,7 +42,7 @@ const OrdersScreen = () => {
 
   const renderProduct = ({ item }) => (
     <View style={styles.productItem}>
-      <Text style={styles.productName}>{item.name} x {item.quantity} x {item.price}   $</Text>
+      <Text style={styles.productName}>{item.name} x {item.quantity} x {item.price}   lek</Text>
     </View>
   );
   /*
@@ -127,22 +127,25 @@ const handleDelete = async (orderId) => {
           keyExtractor={(item) => item._id.toString()}
         />
         {/*<Text style={styles.totalText}>Total: ${calculateTotal(item.products)}</Text>*/}
-        <Text style={styles.totalText}>Total: ${total}</Text>
+        <Text style={styles.totalText}>Total: {total} lek</Text>
         <Text style={styles.statusText}>Status: {item.status}</Text> 
         <Text style={styles.timestampText}>Date: {formattedDate}</Text>
+        <View style={styles.buttonContainer}>
         {(user.role === 'admin') && !isAcceptedOrDeclined && (
-                <View style={styles.buttonContainer}>
+                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.acceptButton} onPress={() => handleAccept(item._id)}>
                         <Text style={styles.buttonText}>Accept</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.declineButton} onPress={() => handleDecline(item._id)}>
                         <Text style={styles.buttonText}>Decline</Text>
                     </TouchableOpacity>
-                </View>
+                    </View>
             )}
           <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item._id)}>
-                            <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
+          </View>
+        
         </View>
       );
   };
@@ -198,22 +201,25 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-evenly',
   },
+  
   acceptButton: {
       backgroundColor: 'green',
       padding: 10,
       borderRadius: 5,
+      marginRight: 10, 
   },
   declineButton: {
-      backgroundColor: 'red',
+      backgroundColor: 'orange',
       padding: 10,
       borderRadius: 5,
+      marginLeft: 10, 
   },
   deleteButton: {
       backgroundColor: 'red',
       padding: 10,
-      borderRadius: 5,
+      borderRadius: 10,
   },
   buttonText: {
       color: '#fff',

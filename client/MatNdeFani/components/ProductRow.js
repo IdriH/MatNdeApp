@@ -6,7 +6,7 @@ import styles from '../styles/ProductRowStyles';
 import { useUser } from '../state/UserContext';
 
 const ProductRow = ({ navigation,id,name,category,distributor,manufacturer, origin,priceBought,priceSold,quantity ,
-  onAdd, // Function to handle adding the product to the order
+  onAdd, 
   onRemove,}) => {
 
     const {user} = useUser();
@@ -17,9 +17,9 @@ const ProductRow = ({ navigation,id,name,category,distributor,manufacturer, orig
        <View style={styles.productDetails}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.detail}>{category}</Text>
-        <Text style={styles.detail}>{distributor}</Text>
-        <Text style={styles.detail}>{manufacturer}</Text>
-        <Text style={styles.origin}>Origin:{origin}</Text>
+        <Text style={styles.detail}>Distributor: {distributor}</Text>
+        <Text style={styles.detail}>Prodhuesi : {manufacturer}</Text>
+        <Text style={styles.origin}>Origjina:{origin}</Text>
       </View>
       <View style={styles.priceAndQuantity}>
         {(user.role ==='admin')?(

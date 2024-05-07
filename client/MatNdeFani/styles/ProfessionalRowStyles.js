@@ -19,14 +19,15 @@ const styles = StyleSheet.create({
   },
     
     profileImage: {
-      width: 50, // Adjust size as needed
-      height: 50, // Adjust size as needed
-      borderRadius: 25, // Makes it circular
-      marginRight: 10, // Adds some space between the image and the text
+      width: 70,
+      height: 70,
+      borderRadius: 25,
+      marginRight: 10,
     },
     professionalDetails: {
       flexDirection: 'column',
       justifyContent: 'center',
+      alignItems : 'center',
     },
     name: {
       fontWeight: 'bold',
@@ -45,13 +46,13 @@ const styles = StyleSheet.create({
     reviewScore: {
       fontWeight: 'bold',
       fontSize: 16,
-      color: '#4CAF50', // A greenish tone to highlight the review score
+      color: '#4CAF50', 
     },
     modifyButton: {
-      backgroundColor: 'yellow', // Yellow background for modify button
+      backgroundColor: 'yellow', 
       padding: 8,
-      borderRadius: 20, // Rounded corners for the button
-      elevation: 2, // Slight shadow for button elevation
+      borderRadius: 20,
+      elevation: 2,
     },
   });
   

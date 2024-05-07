@@ -13,7 +13,7 @@ export const getOrders = async () =>{
 
 export const getOrdersForProfessional = async(pID) => {
     try {
-        console.log("^^^^^^^^^^^^^^^^^^" + pID)
+        //console.log("^^^^^^^^^^^^^^^^^^" + pID)
        
 
         const orders = await Orders.find({ professionalID: pID });
@@ -39,7 +39,7 @@ export const addOrder = async(order) => {
     try {
         // Find the professional by ID to get the fullName
         const professional = await Professionals.findOne({ professionalID: order.professionalID });
-        console.log(professional);
+        //console.log(professional);
         if (!professional) {
             throw new Error('Professional not found');
         }
@@ -50,7 +50,7 @@ export const addOrder = async(order) => {
             professionalName: professional.fullName
         };
 
-        console.log(orderWithProfessionalName)
+        //console.log(orderWithProfessionalName)
 
         // Create a new order with the fullName and other details
         const newOrder = new Orders(orderWithProfessionalName);

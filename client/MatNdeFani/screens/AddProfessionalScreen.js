@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert, Image , KeyboardAvoidingView, ScrollView } from 'react-native';
 import { addProfessional } from '../services/api'; 
 import * as ImagePicker from 'expo-image-picker';
 import { Platform } from 'react-native';
@@ -23,14 +23,14 @@ const AddProfessionalScreen = ({ navigation }) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
-    console.log(result);
+    //console.log(result);
 
     if (!result.canceled) {
       const imageUri = result.assets[0].uri; // Access the uri from the first item of the assets array
-      console.log('New image URI:', imageUri);
+     
       setImage(imageUri); // Set the image URI to state
     }
   }
@@ -50,7 +50,7 @@ const AddProfessionalScreen = ({ navigation }) => {
 
     if (!result.canceled) {
       const imageUri = result.assets[0].uri; // Access the uri from the first item of the assets array
-      console.log('New image URI:', imageUri);
+      
       setImage(imageUri); // Set the image URI to state
     }
   }
@@ -64,7 +64,7 @@ const handleSave = async () => {
           phoneNumber,
           password: password.trim().toLowerCase(),
           category,
-          profilePicture: image // Include the selected profile picture
+          profilePicture: image 
       };
 
       const formData = new FormData();
@@ -98,7 +98,8 @@ const handleSave = async () => {
 };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container}>
+      <ScrollView>
       <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
         <Image source={image ? { uri: image } : defaultImg} style={styles.profileImage} />
       </TouchableOpacity>
@@ -112,7 +113,8 @@ const handleSave = async () => {
       <TouchableOpacity style={styles.button} onPress={handleSave}>
         <Text style={styles.text}>Save Professional</Text>
       </TouchableOpacity>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -129,6 +131,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+    
   },
   button: {
     backgroundColor: '#007bff',

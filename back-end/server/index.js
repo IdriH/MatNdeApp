@@ -191,7 +191,7 @@ app.post('/bookings',(req,res) => {
 
 app.get('/professional/:professionalID' , (req,res)=> {
 
-    console.log(req.params.professionalID)
+    //console.log(req.params.professionalID)
     professionalsDao.getProfessional(req.params.professionalID)
     .then(professional => res.status(200).json({data: professional , message:"Successfully recieved professional"}))
     .catch(err => {
@@ -201,8 +201,8 @@ app.get('/professional/:professionalID' , (req,res)=> {
 })
 
 app.get('/reviews/:professionalID',(req,res)=>{
-    console.log(req.params.professionalID)
-    console.log(req.params.name)
+    //console.log(req.params.professionalID)
+    //console.log(req.params.name)
     reviewsDao.getReviews(req.params.professionalID)
     .then(reviews => res.status(200).json({data: reviews,message : "Successfully retrieved reviews"}))
     .catch(err => {
@@ -212,7 +212,7 @@ app.get('/reviews/:professionalID',(req,res)=>{
 })
 
 app.post('/reviews/add',(req,res)=>{
-   console.log(req.body)
+   //console.log(req.body)
     reviewsDao.addReview(req.body)
     .then(review => res.status(200).json({data:review,messge : "Successfully added review!"}))
     .catch(err =>{
@@ -238,9 +238,9 @@ app.delete('/reviews/delete/:reviewId', async (req, res) => {
 });
 
 app.get('/orders/professionals/:pID',async (req,res) => {
-    console.log(req.params.pID)
+    //console.log(req.params.pID)
     const professionalID = req.params.pID;
-    console.log("%%%%%%%%%%%%0" + professionalID)
+    //console.log("%%%%%%%%%%%%0" + professionalID)
     ordersDao.getOrdersForProfessional(professionalID)
     .then(orders => res.status(200).json({data : orders,message:"Orders for professional retrieved"}))
     .catch(err =>{
@@ -260,7 +260,7 @@ app.get('/orders/professionals/:pID/:oID', async(req,res)=>{
 })
 
 app.post('/orders/add',async(req,res) => {
-    console.log(JSON.stringify(req.body) + '==============')
+    //console.log(JSON.stringify(req.body) + '==============')
     ordersDao.addOrder(req.body)
     .then(order => res.status(200).json({data: order, message:"Order added successfully"}))
     .catch(err =>{
@@ -312,7 +312,7 @@ app.post('/products/add', async (req, res) => {
 
 // Route to modify product by ID
 app.put('/products/modify/:id', async (req, res) => {
-    console.log('called route')
+    //console.log('called route')
     const { id } = req.params;
     const updateData = req.body; // Get update data from request body
 
@@ -362,13 +362,15 @@ app.post('/professionals/add', upload.single('profilePicture'), async (req, res)
         
         
         
-        console.log(req.file)
-        console.log(req.body);
+        //console.log(req.file)
+        //console.log(req.body);
         const newProfessional = req.body;
         if (req.file) {
             newProfessional.profilePicture = req.file.path;  // Using `path` instead of `filename` if you want the full path
         }
-        
+        // Replace backslashes with forward slashes in the file path
+      //let filePath = req.file.path.replace(/\\/g, '/');
+      
 
         const result = await professionalsDao.addProfessionalWithUser(newProfessional);
 
@@ -386,9 +388,7 @@ app.put('/professionals/modify', async (req, res) => {
     try {
         const professionalID = req.body.professionalID;
         const updatedFields = req.body;
-        console.log(professionalID + "@@@@@@@@@@@@");
-        console.log(updatedFields+ "@@@@@@@@@@@@@@");
-
+        
         await professionalsDao.modifyProfessional(professionalID, updatedFields);
         
         res.status(200).json({ message: 'Professional modified successfully' });
@@ -398,6 +398,35 @@ app.put('/professionals/modify', async (req, res) => {
     }
 });
 
+app.put('/professionals/updatePicture', upload.single('profilePicture'), async (req, res) => {
+    try {
+
+        //console.log("ROUTE TO UPLOAD PICTURE ACCESSED")
+      const professionalID = req.body.professionalID;
+      //console.log("Received updatePicture for professionalID:", professionalID);
+      
+      if (!req.file) {
+        console.error("No file uploaded");
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+      // Replace backslashes with forward slashes in the file path
+      let filePath = req.file.path.replace(/\\/g, '/');
+      let updateData = { profilePicture: filePath };
+
+      const result = await professionalsDao.updateProfessionalPicture(professionalID, updateData);
+      //let updateData = { profilePicture: req.file.path };
+      //const result = await professionalsDao.updateProfessionalPicture(professionalID, updateData);
+      
+      //console.log("Profile picture updated:", result);
+      
+      res.status(200).json({ message: 'Profile picture updated successfully', data: result });
+    } catch (error) {
+      console.error('Server error updating profile picture:', error);
+      res.status(500).json({ message: 'Error updating profile picture', error: error.message });
+    }
+  });
+  
+  
 // Route to delete a professional
 app.delete('/professionals/delete/:professionalID', async (req, res) => {
     try {
@@ -473,8 +502,8 @@ app.put('/orders/accept/:orderId', async (req, res) => {
     } catch (error) {
         console.error('Error accepting order:', error);
         // Make sure to send the error message text, not the error object
-        console.log(error + "EEEEEEEEEEERRR")
-        console.log(error.message + "MMMMMMMMMMMMMMMM")
+        //console.log(error + "EEEEEEEEEEERRR")
+        //console.log(error.message + "MMMMMMMMMMMMMMMM")
         res.status(409).json({ message: 'Error accepting order', error: error.message });
     }
 });

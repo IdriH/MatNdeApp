@@ -26,7 +26,7 @@ const ModifyProductScreen = ({ route, navigation }) => {
 
   const handleSaveChanges = async () => {
     const updatedProduct = {
-      id: route.params.id, // Ensure this is correctly passed
+      id: route.params.id, 
       name,
       category,
       distributor,
@@ -40,7 +40,7 @@ const ModifyProductScreen = ({ route, navigation }) => {
     try {
       const result = await updateProduct(route.params.id, updatedProduct);
       if (result) {
-        updateProductsOptimistic({...updatedProduct, _id: route.params.id}); // Make sure to pass all needed fields
+        updateProductsOptimistic({...updatedProduct, _id: route.params.id}); 
         Alert.alert('Success', 'Product updated successfully', [
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
@@ -55,7 +55,7 @@ const ModifyProductScreen = ({ route, navigation }) => {
   const onDelete = async () => {
     try {
       const result = await deleteProduct(route.params.id);
-      console.log(result)
+      //console.log(result)
       if (result.message === "Product deleted successfully") {
         removeProduct(route.params.id);
         Alert.alert('Success', 'Product deleted successfully', [
@@ -105,18 +105,18 @@ const ModifyProductScreen = ({ route, navigation }) => {
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Bought</Text>
-                        <TextInput style={styles.input} value={priceBought} onChangeText={setPriceBought}/>
+                        <TextInput style={styles.input} value={priceBought} onChangeText={setPriceBought} keyboardType="phone-pad"/>
                     </View>
 
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Price Sold</Text>
-                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold} />
+                        <TextInput style={styles.input} value={priceSold} onChangeText={setPriceSold} keyboardType="phone-pad"/>
                     </View>
                     
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Quantity</Text>
-                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity}/>
+                        <TextInput style={styles.input} value={quantity} onChangeText={setQuantity} keyboardType="phone-pad"/>
                     </View>
 
                     <View style={styles.buttonContainer}>
