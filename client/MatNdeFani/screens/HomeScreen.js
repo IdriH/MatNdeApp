@@ -22,6 +22,7 @@ const HomeScreen = ({ navigation}) => {
           // Verify session only if user is logged in
           if (isLoggedIn) {
             const userData = await checkCurrentSession();
+            console.log(userData)
             if (userData) {
               if (user.username !== userData.username) {
                 setUser(userData);
@@ -42,13 +43,13 @@ const HomeScreen = ({ navigation}) => {
     }, [isLoggedIn])
   );
   
-/*
+
   if (isLoggedIn) {
   console.log('Logged in as:', user.username);
   } else {
   console.log('Not logged in');
   }
-*/
+
   const handleLogout = async () => {
     try {
       // Call the logout API

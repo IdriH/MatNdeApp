@@ -1,5 +1,5 @@
 // services/api.js
-const API_BASE_URL = 'http://192.168.30.30:3000'; // This should be the base URL of your back-end server
+const API_BASE_URL = 'http://192.168.239.69:3000'; // This should be the base URL of your back-end server
 export default API_BASE_URL;
 
 

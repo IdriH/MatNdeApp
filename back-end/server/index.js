@@ -222,7 +222,7 @@ app.post('/reviews/add',(req,res)=>{
 })
 
 //delete review for admin only
-app.delete('/reviews/delete/:reviewId', async (req, res) => {
+app.delete('/reviews/delete/:reviewId',isLoggedIn, async (req, res) => {
     try {
         const reviewId = req.params.reviewId;
         const result = await reviewsDao.deleteReview(reviewId);
@@ -237,7 +237,7 @@ app.delete('/reviews/delete/:reviewId', async (req, res) => {
     }
 });
 
-app.get('/orders/professionals/:pID',async (req,res) => {
+app.get('/orders/professionals/:pID',isLoggedIn, async (req,res) => {
     //console.log(req.params.pID)
     const professionalID = req.params.pID;
     //console.log("%%%%%%%%%%%%0" + professionalID)
@@ -250,7 +250,7 @@ app.get('/orders/professionals/:pID',async (req,res) => {
 
 });
 
-app.get('/orders/professionals/:pID/:oID', async(req,res)=>{
+app.get('/orders/professionals/:pID/:oID',isLoggedIn, async(req,res)=>{
     ordersDao.getOrderForProfessional(req.params.pID,req.params.oID)
     .then(order => res.status(200).json({data:order,message: "order retrieved successfully"}))
     .catch(err => {
@@ -259,7 +259,7 @@ app.get('/orders/professionals/:pID/:oID', async(req,res)=>{
     })
 })
 
-app.post('/orders/add',async(req,res) => {
+app.post('/orders/add',isLoggedIn,async(req,res) => {
     //console.log(JSON.stringify(req.body) + '==============')
     ordersDao.addOrder(req.body)
     .then(order => res.status(200).json({data: order, message:"Order added successfully"}))
@@ -269,7 +269,7 @@ app.post('/orders/add',async(req,res) => {
     })
 })
 
-app.delete('/orders/delete/:orderID', async (req, res) => {
+app.delete('/orders/delete/:orderID',isLoggedIn, async (req, res) => {
     const orderID = req.params.orderID;
     ordersDao.deleteOrder(orderID)
         .then(() => res.status(200).json({ message: "Order deleted successfully" }))
@@ -279,7 +279,7 @@ app.delete('/orders/delete/:orderID', async (req, res) => {
         });
 });
 
-app.put('/orders/modify/:orderID', async (req, res) => {
+app.put('/orders/modify/:orderID',isLoggedIn, async (req, res) => {
     const orderID = req.params.orderID;
     const { products } = req.body;
     ordersDao.modifyOrder(orderID, products)
@@ -290,7 +290,7 @@ app.put('/orders/modify/:orderID', async (req, res) => {
         });
 });
 
-app.get('/professionals/status/:pID',async(req,res) => {
+app.get('/professionals/status/:pID',isLoggedIn,async(req,res) => {
     professionalsDao.toggleStatus(req.params.pID)
     .then(professional => res.status(200).json({data:professional,message:"Toogled status for professional"}))
     .catch(err => { 
@@ -299,7 +299,7 @@ app.get('/professionals/status/:pID',async(req,res) => {
     })
 })
 
-app.post('/products/add', async (req, res) => {
+app.post('/products/add',isLoggedIn, async (req, res) => {
     productsDao.addProduct(req.body)
         .then(product => res.status(200).json({ data: product, message: "Product added successfully" }))
         .catch(err => {
@@ -311,7 +311,7 @@ app.post('/products/add', async (req, res) => {
 
 
 // Route to modify product by ID
-app.put('/products/modify/:id', async (req, res) => {
+app.put('/products/modify/:id',isLoggedIn, async (req, res) => {
     //console.log('called route')
     const { id } = req.params;
     const updateData = req.body; // Get update data from request body
@@ -330,7 +330,7 @@ app.put('/products/modify/:id', async (req, res) => {
 });
 
 
-app.delete('/products/delete/:id', async (req, res) => {
+app.delete('/products/delete/:id',isLoggedIn, async (req, res) => {
     try {
         const productId = req.params.id;
         await productsDao.deleteProduct(productId);
@@ -357,7 +357,7 @@ app.post('/professionals/add', async (req, res) => {
 });
 */
 // Route to add a professional
-app.post('/professionals/add', upload.single('profilePicture'), async (req, res) => {
+app.post('/professionals/add',isLoggedIn, upload.single('profilePicture'), async (req, res) => {
     try {
         
         
@@ -384,7 +384,7 @@ app.post('/professionals/add', upload.single('profilePicture'), async (req, res)
 
 
 // Route to modify a professional
-app.put('/professionals/modify', async (req, res) => {
+app.put('/professionals/modify',isLoggedIn, async (req, res) => {
     try {
         const professionalID = req.body.professionalID;
         const updatedFields = req.body;
@@ -398,7 +398,7 @@ app.put('/professionals/modify', async (req, res) => {
     }
 });
 
-app.put('/professionals/updatePicture', upload.single('profilePicture'), async (req, res) => {
+app.put('/professionals/updatePicture',isLoggedIn, upload.single('profilePicture'), async (req, res) => {
     try {
 
         //console.log("ROUTE TO UPLOAD PICTURE ACCESSED")
@@ -428,7 +428,7 @@ app.put('/professionals/updatePicture', upload.single('profilePicture'), async (
   
   
 // Route to delete a professional
-app.delete('/professionals/delete/:professionalID', async (req, res) => {
+app.delete('/professionals/delete/:professionalID',isLoggedIn, async (req, res) => {
     try {
         const professionalID = req.params.professionalID;
 
@@ -442,7 +442,7 @@ app.delete('/professionals/delete/:professionalID', async (req, res) => {
 });
 
 // Route to get a specific order by ID
-app.get('/orders/:orderID', async (req, res) => {
+app.get('/orders/:orderID',isLoggedIn, async (req, res) => {
     try {
         const orderID = req.params.orderID;
 
@@ -494,7 +494,7 @@ app.put('/orders/accept/:orderID', async (req, res) => {
 });
 */
 // Route to accept an order
-app.put('/orders/accept/:orderId', async (req, res) => {
+app.put('/orders/accept/:orderId',isLoggedIn, async (req, res) => {
     try {
         const { orderId } = req.params;
         const updatedOrder = await ordersDao.updateOrderStatus(orderId, 'accepted');
@@ -508,7 +508,7 @@ app.put('/orders/accept/:orderId', async (req, res) => {
     }
 });
 // Route to decline an order
-app.put('/orders/decline/:orderId', async (req, res) => {
+app.put('/orders/decline/:orderId',isLoggedIn, async (req, res) => {
     try {
         const { orderId } = req.params;
         const updatedOrder = await ordersDao.updateOrderStatus(orderId, 'declined');
