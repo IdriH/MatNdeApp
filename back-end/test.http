@@ -1,11 +1,11 @@
 
 
 ###
-GET http://localhost:3000/
+GET https://matndefani.com/
 
 ## Execute Log In
 ###
-POST http://localhost:3000/api/sessions HTTP/1.1
+POST https://matndefani.com/api/sessions HTTP/1.1
 content-type: application/json
 
 {
@@ -15,7 +15,7 @@ content-type: application/json
 ###
 
 ## Checking if user is still logged-in.
-GET http://localhost:3000/api/sessions/current HTTP/1.1
+GET https://matndefani.com/api/sessions/current HTTP/1.1
 ###
 
 ## Execute Log Out.

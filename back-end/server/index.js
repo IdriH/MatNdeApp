@@ -1,6 +1,7 @@
 'use strict';
 
 const PORT = 3000;
+import https from 'https'
 
 import express from 'express'
 import morgan from 'morgan'
@@ -546,3 +547,14 @@ availabilitiesDao.getAvailability(req.params.professionalID)
 
 
 app.listen(3000,() => console.log('server ready'));
+
+/*
+const options = {
+    key: fs.readFileSync('../certificates/key.pem'),
+    cert : fs.readFileSync('../certificates/cert.pem')
+}
+/*
+https.createServer(options , (req,res)=> {
+    res.end("SSL Added")
+}).listen(PORT)
+*/
