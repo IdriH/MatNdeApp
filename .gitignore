@@ -1,0 +1,11 @@
+back-end/node_modules/
+back-end/db/dbtests.js
+back-end/db/insertionToDb.js
+back-end/package.json
+back-end/package-lock.json
+back-end/server/dao-availabilities.js
+back-end/server/dao-bookings.js
+client/MatNdeFani/google-services.json
+back-end/db/schemas.js
+back-end/db/connection.js
+back-end/certificates

@@ -1,0 +1,18 @@
+MatNdeApp/
+└── client/
+    ├── src/
+        ├── assets/            # For images, fonts, and other static files
+        ├── components/        # Reusable components across different screens
+        ├── screens/           # Components that represent full screens
+        ├── navigation/        # Navigation related logic and components
+        ├── services/          # For network requests, and external services
+        ├── utils/             # Utility functions and helpers
+        ├── state/             # Global state management (e.g., Redux, Context)
+        ├── styles/            # Common styles or theme related information
+        ├── App.js             # Entry point of the React Native application
+        └── config/            # Configuration files and constants
+    ├── __tests__/             # Unit and integration tests
+    ├── android/               # Android specific native code
+    ├── ios/                   # iOS specific native code
+    ├── index.js               # Root JS file for React Native
+    └── package.json           # NPM dependencies and scripts
