@@ -1,7 +1,7 @@
 
 
 import mongoose from "mongoose"
-const url = 'mongodb+srv://idrihoxha2000:5bwqkDJZW6Bai2dz@matndefani.wy56plh.mongodb.net/MatNdeFani?retryWrites=true&w=majority';
+const url = 'secret';
 
 
 
@@ -31,7 +31,7 @@ const connectDb = async () => {
 
 /*
 import { MongoClient, ServerApiVersion } from 'mongodb';
-const uri = 'mongodb+srv://idrihoxha2000:5bwqkDJZW6Bai2dz@matndefani.wy56plh.mongodb.net/MatNdeFani?retryWrites=true&w=majority';
+const uri = 'secret';
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri);
 const connectDb = async () => {
@@ -51,8 +51,8 @@ export default connectDb;
 /*
   import { MongoClient } from "mongodb";
   // Replace the uri string with your connection string.
-  //const uri = 'mongodb+srv://idrihoxha2000:5bwqkDJZW6Bai2dz@matndefani.wy56plh.mongodb.net/MatNdeFani?retryWrites=true&w=majority';
-  const uri = "mongodb+srv://idrihoxha2000:5bwqkDJZW6Bai2dz@matndefani.wy56plh.mongodb.net/?retryWrites=true&w=majority&appName=MatNdeFani"
+  //const uri = '';
+  const uri = ""
   const client = new MongoClient(uri);
   async function run() {
     try {
